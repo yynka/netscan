@@ -1,5 +1,5 @@
 # netscan.ps1
-# this script does a basic network scan to find active devices on the local network.
+# this script scans the local network for active devices and retrieves their MAC addresses.
 
 # get the local IP address and subnet mask to figure out the network range
 function Get-NetworkRange {
@@ -20,14 +20,42 @@ function Scan-Network {
     
     # split out the IP base to loop through addresses 1-254
     $ipBase = $networkRange -replace '\d+$', ''
+    $activeDevices = @()
+
     for ($i = 1; $i -le 254; $i++) {
         $ip = "$ipBase$i"
         if (Test-Connection -ComputerName $ip -Count 1 -Quiet) {
             Write-Host "$ip is active"
+            $activeDevices += [PSCustomObject]@{
+                IPAddress = $ip
+            }
+        }
+    }
+    return $activeDevices
+}
+
+# retrieve the MAC address of each active device using arp
+function Get-MACAddress {
+    param (
+        [array]$activeDevices
+    )
+
+    Write-Host "`nretrieving MAC addresses for active devices..."
+    $arpTable = arp -a
+
+    foreach ($device in $activeDevices) {
+        $ip = $device.IPAddress
+        $mac = ($arpTable | Select-String $ip).ToString().Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[1]
+        if ($mac) {
+            $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value $mac
+            Write-Host "$ip - MAC Address: $mac"
+        } else {
+            Write-Host "$ip - MAC Address: Not found"
         }
     }
 }
 
-# main script execution: get the network range and start scanning
+# main script execution
 $networkRange = Get-NetworkRange
-Scan-Network -networkRange $networkRange
+$activeDevices = Scan-Network -networkRange $networkRange
+Get-MACAddress -activeDevices $activeDevices
