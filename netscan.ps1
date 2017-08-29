@@ -1,5 +1,6 @@
 # netscan.ps1
 # this script scans the local network for active devices, retrieves MAC addresses, and checks for open ports.
+# the final version includes a summary of all scanned devices with their details.
 
 # get the local IP address and subnet mask to figure out the network range
 function Get-NetworkRange {
@@ -50,6 +51,7 @@ function Get-MACAddress {
             $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value $mac
             Write-Host "$ip - MAC Address: $mac"
         } else {
+            $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value "Not found"
             Write-Host "$ip - MAC Address: Not found"
         }
     }
@@ -76,23 +78,40 @@ function Check-OpenPorts {
 
     Write-Host "`nchecking for open ports on active devices..."
     foreach ($device in $activeDevices) {
-        Write-Host "`n$($device.IPAddress)"
+        $devicePorts = @()
         foreach ($port in $commonPorts.Keys) {
             try {
                 $tcpClient = New-Object System.Net.Sockets.TcpClient
                 $tcpClient.Connect($device.IPAddress, $port)
                 $tcpClient.Close()
-                Write-Host "Port $port is open - $($commonPorts[$port])"
-                $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value "$port: $($commonPorts[$port])"
+                $devicePorts += "$port: $($commonPorts[$port])"
             } catch {
                 # port is closed, no action needed
             }
         }
+        if ($devicePorts.Count -gt 0) {
+            $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value ($devicePorts -join ", ")
+        } else {
+            $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value "No open common ports"
+        }
     }
 }
 
-# main script execution: get the network range, scan for devices, retrieve MAC addresses, and check open ports
+# display a summary of all active devices
+function Display-Summary {
+    param (
+        [array]$activeDevices
+    )
+
+    Write-Host "`nsummary of active devices:"
+    foreach ($device in $activeDevices) {
+        Write-Host "IP: $($device.IPAddress), MAC: $($device.MACAddress), Open Ports: $($device.OpenPorts)"
+    }
+}
+
+# main script execution: get the network range, scan for devices, retrieve MAC addresses, check open ports, and display summary
 $networkRange = Get-NetworkRange
 $activeDevices = Scan-Network -networkRange $networkRange
 Get-MACAddress -activeDevices $activeDevices
 Check-OpenPorts -activeDevices $activeDevices
+Display-Summary -activeDevices $activeDevices
