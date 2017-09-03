@@ -1,117 +1,189 @@
 # netscan.ps1
-# this script scans the local network for active devices, retrieves MAC addresses, and checks for open ports.
-# the final version includes a summary of all scanned devices with their details.
+# Advanced network scanner for device discovery and service enumeration
+[CmdletBinding()]
+param(
+    [switch]$SkipPortScan,
+    [int]$Timeout = 1000,
+    [string]$OutputFile
+)
 
-# get the local IP address and subnet mask to figure out the network range
-function Get-NetworkRange {
-    $ipconfig = Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -ne "127.0.0.1" }
-    $ipAddress = $ipconfig.IPAddress
-    $subnetMask = $ipconfig.PrefixLength
-    $networkRange = "$ipAddress/$subnetMask"
-    return $networkRange
+# Common ports with service names
+$COMMON_PORTS = @{
+    20  = "FTP-Data"
+    21  = "FTP"
+    22  = "SSH"
+    23  = "Telnet"
+    25  = "SMTP"
+    53  = "DNS"
+    80  = "HTTP"
+    110 = "POP3"
+    123 = "NTP"
+    143 = "IMAP"
+    161 = "SNMP"
+    443 = "HTTPS"
+    445 = "SMB"
+    3389 = "RDP"
+    8080 = "HTTP-Alt"
 }
 
-# perform a network scan by pinging each IP in the range and checking which ones respond
-function Scan-Network {
-    param (
-        [string]$networkRange
-    )
+function Get-NetworkRange {
+    try {
+        $interface = Get-NetIPAddress -AddressFamily IPv4 | 
+            Where-Object { $_.IPAddress -ne "127.0.0.1" -and $_.PrefixLength -lt 32 } |
+            Select-Object -First 1
 
-    Write-Host "scanning network range: $networkRange"
-    
-    # split out the IP base to loop through addresses 1-254
-    $ipBase = $networkRange -replace '\d+$', ''
-    $activeDevices = @()
+        if (-not $interface) {
+            throw "No valid network interface found"
+        }
 
-    for ($i = 1; $i -le 254; $i++) {
-        $ip = "$ipBase$i"
-        if (Test-Connection -ComputerName $ip -Count 1 -Quiet) {
-            $activeDevices += [PSCustomObject]@{
-                IPAddress = $ip
+        # Calculate network address range
+        $ipBytes = [System.Net.IPAddress]::Parse($interface.IPAddress).GetAddressBytes()
+        $maskBytes = [byte[]](1..4 | ForEach-Object { 
+            if ($_ * 8 -le $interface.PrefixLength) { 255 }
+            elseif (($_ - 1) * 8 -lt $interface.PrefixLength) { 
+                [math]::Pow(2, 8 - ($interface.PrefixLength % 8)) - 1
             }
-            Write-Host "$ip is active"
+            else { 0 }
+        })
+
+        $networkAddress = [byte[]](0..3 | ForEach-Object { $ipBytes[$_] -band $maskBytes[$_] })
+        $networkBase = [System.Net.IPAddress]::new($networkAddress).ToString()
+
+        return @{
+            Base = $networkBase
+            Prefix = $interface.PrefixLength
+            Interface = $interface.IPAddress
         }
     }
+    catch {
+        Write-Error "Failed to determine network range: $_"
+        exit 1
+    }
+}
+
+function Start-NetworkScan {
+    param (
+        [Parameter(Mandatory)]
+        [hashtable]$NetworkInfo
+    )
+
+    Write-Host "[*] Starting network scan on $($NetworkInfo.Interface)/$($NetworkInfo.Prefix)" -ForegroundColor Cyan
+    
+    # Calculate scan range based on subnet
+    $hosts = [math]::Pow(2, (32 - $NetworkInfo.Prefix)) - 2
+    $scanRange = 1..$hosts
+    
+    # Parallel ping sweep
+    $pingJobs = $scanRange | ForEach-Object {
+        $ip = $NetworkInfo.Base -replace '\d+$', $_
+        Start-Job -ScriptBlock {
+            Test-Connection -ComputerName $args[0] -Count 1 -Quiet
+        } -ArgumentList $ip
+    }
+
+    $activeDevices = @()
+    foreach ($i in 0..($pingJobs.Count-1)) {
+        $job = $pingJobs[$i]
+        if ((Receive-Job -Job $job -Wait)) {
+            $ip = $NetworkInfo.Base -replace '\d+$', ($i + 1)
+            $activeDevices += [PSCustomObject]@{
+                IPAddress = $ip
+                Hostname = try { [System.Net.Dns]::GetHostEntry($ip).HostName } catch { "N/A" }
+            }
+            Write-Host "[+] Found active host: $ip" -ForegroundColor Green
+        }
+        Remove-Job -Job $job
+    }
+
     return $activeDevices
 }
 
-# retrieve MAC addresses for each active device using arp
-function Get-MACAddress {
+function Get-DeviceMACAddress {
     param (
-        [array]$activeDevices
+        [array]$ActiveDevices
     )
 
-    Write-Host "`nretrieving MAC addresses for active devices..."
+    Write-Host "[*] Retrieving MAC addresses..." -ForegroundColor Cyan
     $arpTable = arp -a
-
-    foreach ($device in $activeDevices) {
-        $ip = $device.IPAddress
-        $mac = ($arpTable | Select-String $ip).ToString().Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[1]
-        if ($mac) {
+    
+    foreach ($device in $ActiveDevices) {
+        $macMatch = $arpTable | Select-String $device.IPAddress
+        if ($macMatch) {
+            $mac = ($macMatch.ToString() -split '\s+')[2]
             $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value $mac
-            Write-Host "$ip - MAC Address: $mac"
-        } else {
-            $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value "Not found"
-            Write-Host "$ip - MAC Address: Not found"
+            
+            # Try to get vendor from MAC OUI
+            $oui = $mac.Replace('-', '').Substring(0, 6)
+            $device | Add-Member -MemberType NoteProperty -Name Vendor -Value (Get-MACVendor $oui)
         }
     }
 }
 
-# check for open common ports on each active device
-function Check-OpenPorts {
+function Get-MACVendor {
+    param([string]$OUI)
+    # Add your own MAC vendor lookup logic or API call here
+    return "Unknown"
+}
+
+function Test-OpenPorts {
     param (
-        [array]$activeDevices
+        [array]$ActiveDevices,
+        [int]$Timeout
     )
 
-    $commonPorts = @{
-        21  = "FTP"
-        22  = "SSH"
-        23  = "Telnet"
-        25  = "SMTP"
-        53  = "DNS"
-        80  = "HTTP"
-        110 = "POP3"
-        143 = "IMAP"
-        443 = "HTTPS"
-        3389 = "RDP"
-    }
+    Write-Host "[*] Scanning for open ports (timeout: ${Timeout}ms)..." -ForegroundColor Cyan
+    
+    foreach ($device in $ActiveDevices) {
+        $openPorts = @()
+        
+        # Parallel port scanning
+        $portJobs = $COMMON_PORTS.Keys | ForEach-Object {
+            $port = $_
+            Start-Job -ScriptBlock {
+                $tcp = New-Object System.Net.Sockets.TcpClient
+                try {
+                    $result = $tcp.BeginConnect($args[0], $args[1], $null, $null)
+                    $success = $result.AsyncWaitHandle.WaitOne($args[2])
+                    if ($success) { return $true }
+                }
+                catch {}
+                finally {
+                    $tcp.Close()
+                }
+                return $false
+            } -ArgumentList $device.IPAddress, $port, $Timeout
+        }
 
-    Write-Host "`nchecking for open ports on active devices..."
-    foreach ($device in $activeDevices) {
-        $devicePorts = @()
-        foreach ($port in $commonPorts.Keys) {
-            try {
-                $tcpClient = New-Object System.Net.Sockets.TcpClient
-                $tcpClient.Connect($device.IPAddress, $port)
-                $tcpClient.Close()
-                $devicePorts += "$port: $($commonPorts[$port])"
-            } catch {
-                # port is closed, no action needed
+        foreach ($port in $COMMON_PORTS.Keys) {
+            $job = $portJobs[$port - 1]
+            if ((Receive-Job -Job $job -Wait)) {
+                $openPorts += "$port ($($COMMON_PORTS[$port]))"
+                Write-Host "[+] $($device.IPAddress) - Port $port open" -ForegroundColor Green
             }
+            Remove-Job -Job $job
         }
-        if ($devicePorts.Count -gt 0) {
-            $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value ($devicePorts -join ", ")
-        } else {
-            $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value "No open common ports"
-        }
+
+        $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value ($openPorts -join ", ")
     }
 }
 
-# display a summary of all active devices
-function Display-Summary {
-    param (
-        [array]$activeDevices
-    )
+# Main execution
+$networkInfo = Get-NetworkRange
+$activeDevices = Start-NetworkScan -NetworkInfo $networkInfo
+Get-DeviceMACAddress -ActiveDevices $activeDevices
 
-    Write-Host "`nsummary of active devices:"
-    foreach ($device in $activeDevices) {
-        Write-Host "IP: $($device.IPAddress), MAC: $($device.MACAddress), Open Ports: $($device.OpenPorts)"
-    }
+if (-not $SkipPortScan) {
+    Test-OpenPorts -ActiveDevices $activeDevices -Timeout $Timeout
 }
 
-# main script execution: get the network range, scan for devices, retrieve MAC addresses, check open ports, and display summary
-$networkRange = Get-NetworkRange
-$activeDevices = Scan-Network -networkRange $networkRange
-Get-MACAddress -activeDevices $activeDevices
-Check-OpenPorts -activeDevices $activeDevices
-Display-Summary -activeDevices $activeDevices
+# Generate report
+$report = $activeDevices | Format-Table -AutoSize -Property `
+    IPAddress, Hostname, MACAddress, Vendor, OpenPorts | Out-String
+
+Write-Host "`n[*] Scan Results:" -ForegroundColor Cyan
+Write-Host $report
+
+if ($OutputFile) {
+    $activeDevices | Export-Csv -Path $OutputFile -NoTypeInformation
+    Write-Host "[*] Results exported to $OutputFile" -ForegroundColor Cyan
+}
