@@ -1,189 +1,206 @@
-# netscan.ps1
-# Advanced network scanner for device discovery and service enumeration
+# Enhanced netscan.ps1
 [CmdletBinding()]
 param(
-    [switch]$SkipPortScan,
-    [int]$Timeout = 1000,
-    [string]$OutputFile
+    [switch]$Monitor,
+    [int]$RefreshInterval = 300,
+    [string]$LogPath = "$HOME\DeviceProfiles"
 )
 
-# Common ports with service names
-$COMMON_PORTS = @{
-    20  = "FTP-Data"
-    21  = "FTP"
-    22  = "SSH"
-    23  = "Telnet"
-    25  = "SMTP"
-    53  = "DNS"
-    80  = "HTTP"
-    110 = "POP3"
-    123 = "NTP"
-    143 = "IMAP"
-    161 = "SNMP"
-    443 = "HTTPS"
-    445 = "SMB"
-    3389 = "RDP"
-    8080 = "HTTP-Alt"
-}
+# Create log directory if it doesn't exist
+New-Item -ItemType Directory -Force -Path $LogPath | Out-Null
 
-function Get-NetworkRange {
-    try {
-        $interface = Get-NetIPAddress -AddressFamily IPv4 | 
-            Where-Object { $_.IPAddress -ne "127.0.0.1" -and $_.PrefixLength -lt 32 } |
-            Select-Object -First 1
-
-        if (-not $interface) {
-            throw "No valid network interface found"
-        }
-
-        # Calculate network address range
-        $ipBytes = [System.Net.IPAddress]::Parse($interface.IPAddress).GetAddressBytes()
-        $maskBytes = [byte[]](1..4 | ForEach-Object { 
-            if ($_ * 8 -le $interface.PrefixLength) { 255 }
-            elseif (($_ - 1) * 8 -lt $interface.PrefixLength) { 
-                [math]::Pow(2, 8 - ($interface.PrefixLength % 8)) - 1
-            }
-            else { 0 }
-        })
-
-        $networkAddress = [byte[]](0..3 | ForEach-Object { $ipBytes[$_] -band $maskBytes[$_] })
-        $networkBase = [System.Net.IPAddress]::new($networkAddress).ToString()
-
-        return @{
-            Base = $networkBase
-            Prefix = $interface.PrefixLength
-            Interface = $interface.IPAddress
-        }
-    }
-    catch {
-        Write-Error "Failed to determine network range: $_"
-        exit 1
+class DeviceProfile {
+    [string]$IPAddress
+    [string]$Hostname
+    [string]$MACAddress
+    [string]$Vendor
+    [string]$ComputerName
+    [string]$OSVersion
+    [string]$LastUser
+    [datetime]$FirstSeen
+    [datetime]$LastSeen
+    [System.Collections.ArrayList]$Services
+    [System.Collections.ArrayList]$SharedResources
+    [System.Collections.ArrayList]$History
+    
+    DeviceProfile([string]$ip) {
+        $this.IPAddress = $ip
+        $this.FirstSeen = Get-Date
+        $this.LastSeen = Get-Date
+        $this.Services = New-Object System.Collections.ArrayList
+        $this.SharedResources = New-Object System.Collections.ArrayList
+        $this.History = New-Object System.Collections.ArrayList
     }
 }
 
-function Start-NetworkScan {
+function Get-DeviceDetails {
     param (
         [Parameter(Mandatory)]
-        [hashtable]$NetworkInfo
+        [string]$IPAddress
     )
-
-    Write-Host "[*] Starting network scan on $($NetworkInfo.Interface)/$($NetworkInfo.Prefix)" -ForegroundColor Cyan
     
-    # Calculate scan range based on subnet
-    $hosts = [math]::Pow(2, (32 - $NetworkInfo.Prefix)) - 2
-    $scanRange = 1..$hosts
+    $profile = [DeviceProfile]::new($IPAddress)
     
-    # Parallel ping sweep
-    $pingJobs = $scanRange | ForEach-Object {
-        $ip = $NetworkInfo.Base -replace '\d+$', $_
-        Start-Job -ScriptBlock {
-            Test-Connection -ComputerName $args[0] -Count 1 -Quiet
-        } -ArgumentList $ip
-    }
-
-    $activeDevices = @()
-    foreach ($i in 0..($pingJobs.Count-1)) {
-        $job = $pingJobs[$i]
-        if ((Receive-Job -Job $job -Wait)) {
-            $ip = $NetworkInfo.Base -replace '\d+$', ($i + 1)
-            $activeDevices += [PSCustomObject]@{
-                IPAddress = $ip
-                Hostname = try { [System.Net.Dns]::GetHostEntry($ip).HostName } catch { "N/A" }
-            }
-            Write-Host "[+] Found active host: $ip" -ForegroundColor Green
-        }
-        Remove-Job -Job $job
-    }
-
-    return $activeDevices
-}
-
-function Get-DeviceMACAddress {
-    param (
-        [array]$ActiveDevices
-    )
-
-    Write-Host "[*] Retrieving MAC addresses..." -ForegroundColor Cyan
-    $arpTable = arp -a
-    
-    foreach ($device in $ActiveDevices) {
-        $macMatch = $arpTable | Select-String $device.IPAddress
-        if ($macMatch) {
-            $mac = ($macMatch.ToString() -split '\s+')[2]
-            $device | Add-Member -MemberType NoteProperty -Name MACAddress -Value $mac
-            
-            # Try to get vendor from MAC OUI
-            $oui = $mac.Replace('-', '').Substring(0, 6)
-            $device | Add-Member -MemberType NoteProperty -Name Vendor -Value (Get-MACVendor $oui)
-        }
-    }
-}
-
-function Get-MACVendor {
-    param([string]$OUI)
-    # Add your own MAC vendor lookup logic or API call here
-    return "Unknown"
-}
-
-function Test-OpenPorts {
-    param (
-        [array]$ActiveDevices,
-        [int]$Timeout
-    )
-
-    Write-Host "[*] Scanning for open ports (timeout: ${Timeout}ms)..." -ForegroundColor Cyan
-    
-    foreach ($device in $ActiveDevices) {
-        $openPorts = @()
+    try {
+        # Basic system info
+        $sysInfo = Get-WmiObject -Class Win32_ComputerSystem -ComputerName $IPAddress -ErrorAction Stop
+        $osInfo = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $IPAddress -ErrorAction Stop
         
-        # Parallel port scanning
-        $portJobs = $COMMON_PORTS.Keys | ForEach-Object {
-            $port = $_
-            Start-Job -ScriptBlock {
-                $tcp = New-Object System.Net.Sockets.TcpClient
-                try {
-                    $result = $tcp.BeginConnect($args[0], $args[1], $null, $null)
-                    $success = $result.AsyncWaitHandle.WaitOne($args[2])
-                    if ($success) { return $true }
-                }
-                catch {}
-                finally {
-                    $tcp.Close()
-                }
-                return $false
-            } -ArgumentList $device.IPAddress, $port, $Timeout
+        $profile.ComputerName = $sysInfo.Name
+        $profile.OSVersion = $osInfo.Caption
+        $profile.LastUser = $osInfo.RegisteredUser
+        
+        # Get running services
+        Get-Service -ComputerName $IPAddress | Where-Object {$_.Status -eq 'Running'} | ForEach-Object {
+            $profile.Services.Add(@{
+                Name = $_.Name
+                DisplayName = $_.DisplayName
+                Status = $_.Status
+                StartType = $_.StartType
+            }) | Out-Null
         }
-
-        foreach ($port in $COMMON_PORTS.Keys) {
-            $job = $portJobs[$port - 1]
-            if ((Receive-Job -Job $job -Wait)) {
-                $openPorts += "$port ($($COMMON_PORTS[$port]))"
-                Write-Host "[+] $($device.IPAddress) - Port $port open" -ForegroundColor Green
+        
+        # Get shared resources
+        Get-WmiObject -Class Win32_Share -ComputerName $IPAddress | ForEach-Object {
+            $profile.SharedResources.Add(@{
+                Name = $_.Name
+                Path = $_.Path
+                Description = $_.Description
+            }) | Out-Null
+        }
+        
+        # Network interfaces
+        Get-WmiObject -Class Win32_NetworkAdapterConfiguration -ComputerName $IPAddress | 
+            Where-Object {$_.IPEnabled} | ForEach-Object {
+                $profile.History.Add(@{
+                    Timestamp = Get-Date
+                    Type = "NetworkAdapter"
+                    Data = @{
+                        Description = $_.Description
+                        IPAddress = $_.IPAddress
+                        DefaultGateway = $_.DefaultIPGateway
+                        DHCPEnabled = $_.DHCPEnabled
+                        DHCPServer = $_.DHCPServer
+                    }
+                }) | Out-Null
             }
-            Remove-Job -Job $job
-        }
-
-        $device | Add-Member -MemberType NoteProperty -Name OpenPorts -Value ($openPorts -join ", ")
     }
+    catch {
+        Write-Warning "Could not retrieve complete device details for $IPAddress : $_"
+    }
+    
+    return $profile
+}
+
+function Show-DeviceMonitor {
+    param (
+        [array]$Devices
+    )
+    
+    Add-Type -AssemblyName System.Windows.Forms
+    Add-Type -AssemblyName System.Drawing
+    
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = "Network Device Monitor"
+    $form.Size = New-Object System.Drawing.Size(800,600)
+    
+    $deviceList = New-Object System.Windows.Forms.ComboBox
+    $deviceList.Location = New-Object System.Drawing.Point(10,10)
+    $deviceList.Size = New-Object System.Drawing.Size(300,20)
+    $deviceList.Items.AddRange($Devices | ForEach-Object { "$($_.ComputerName) ($($_.IPAddress))" })
+    $form.Controls.Add($deviceList)
+    
+    $detailsPanel = New-Object System.Windows.Forms.Panel
+    $detailsPanel.Location = New-Object System.Drawing.Point(10,40)
+    $detailsPanel.Size = New-Object System.Drawing.Size(760,500)
+    $detailsPanel.AutoScroll = $true
+    $form.Controls.Add($detailsPanel)
+    
+    $deviceList.Add_SelectedIndexChanged({
+        $detailsPanel.Controls.Clear()
+        $selectedDevice = $Devices[$deviceList.SelectedIndex]
+        
+        $y = 10
+        @(
+            @{Label="Computer Name"; Value=$selectedDevice.ComputerName},
+            @{Label="IP Address"; Value=$selectedDevice.IPAddress},
+            @{Label="MAC Address"; Value=$selectedDevice.MACAddress},
+            @{Label="OS Version"; Value=$selectedDevice.OSVersion},
+            @{Label="Last User"; Value=$selectedDevice.LastUser},
+            @{Label="First Seen"; Value=$selectedDevice.FirstSeen},
+            @{Label="Last Seen"; Value=$selectedDevice.LastSeen}
+        ) | ForEach-Object {
+            $label = New-Object System.Windows.Forms.Label
+            $label.Location = New-Object System.Drawing.Point(0,$y)
+            $label.Size = New-Object System.Drawing.Size(760,20)
+            $label.Text = "$($_.Label): $($_.Value)"
+            $detailsPanel.Controls.Add($label)
+            $y += 25
+        }
+        
+        # Add services section
+        $y += 10
+        $servicesLabel = New-Object System.Windows.Forms.Label
+        $servicesLabel.Location = New-Object System.Drawing.Point(0,$y)
+        $servicesLabel.Size = New-Object System.Drawing.Size(760,20)
+        $servicesLabel.Text = "Running Services:"
+        $detailsPanel.Controls.Add($servicesLabel)
+        $y += 25
+        
+        foreach ($service in $selectedDevice.Services) {
+            $serviceLabel = New-Object System.Windows.Forms.Label
+            $serviceLabel.Location = New-Object System.Drawing.Point(20,$y)
+            $serviceLabel.Size = New-Object System.Drawing.Size(740,20)
+            $serviceLabel.Text = "$($service.DisplayName) [$($service.Name)]"
+            $detailsPanel.Controls.Add($serviceLabel)
+            $y += 20
+        }
+        
+        # Add history section
+        $y += 20
+        $historyLabel = New-Object System.Windows.Forms.Label
+        $historyLabel.Location = New-Object System.Drawing.Point(0,$y)
+        $historyLabel.Size = New-Object System.Drawing.Size(760,20)
+        $historyLabel.Text = "History:"
+        $detailsPanel.Controls.Add($historyLabel)
+        $y += 25
+        
+        foreach ($entry in ($selectedDevice.History | Sort-Object Timestamp -Descending)) {
+            $entryLabel = New-Object System.Windows.Forms.Label
+            $entryLabel.Location = New-Object System.Drawing.Point(20,$y)
+            $entryLabel.Size = New-Object System.Drawing.Size(740,40)
+            $entryLabel.Text = "[$($entry.Timestamp)] $($entry.Type)`n$($entry.Data | ConvertTo-Json -Compress)"
+            $detailsPanel.Controls.Add($entryLabel)
+            $y += 45
+        }
+    })
+    
+    if ($Monitor) {
+        $timer = New-Object System.Windows.Forms.Timer
+        $timer.Interval = $RefreshInterval * 1000
+        $timer.Add_Tick({
+            $deviceList.SelectedIndex = $deviceList.SelectedIndex
+        })
+        $timer.Start()
+    }
+    
+    $form.ShowDialog()
 }
 
 # Main execution
+Write-Host "[*] Starting enhanced network scan..."
 $networkInfo = Get-NetworkRange
 $activeDevices = Start-NetworkScan -NetworkInfo $networkInfo
-Get-DeviceMACAddress -ActiveDevices $activeDevices
+$deviceProfiles = @()
 
-if (-not $SkipPortScan) {
-    Test-OpenPorts -ActiveDevices $activeDevices -Timeout $Timeout
+foreach ($device in $activeDevices) {
+    Write-Host "[*] Profiling device: $($device.IPAddress)..."
+    $profile = Get-DeviceDetails -IPAddress $device.IPAddress
+    $deviceProfiles += $profile
+    
+    # Save profile to log file
+    $profile | ConvertTo-Json -Depth 10 | 
+        Out-File -FilePath "$LogPath\$($device.IPAddress.Replace('.','_')).json"
 }
 
-# Generate report
-$report = $activeDevices | Format-Table -AutoSize -Property `
-    IPAddress, Hostname, MACAddress, Vendor, OpenPorts | Out-String
-
-Write-Host "`n[*] Scan Results:" -ForegroundColor Cyan
-Write-Host $report
-
-if ($OutputFile) {
-    $activeDevices | Export-Csv -Path $OutputFile -NoTypeInformation
-    Write-Host "[*] Results exported to $OutputFile" -ForegroundColor Cyan
-}
+Show-DeviceMonitor -Devices $deviceProfiles
