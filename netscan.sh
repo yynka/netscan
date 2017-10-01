@@ -1,6 +1,6 @@
 #!/bin/bash
 # netscan.sh
-# this script scans the local network for active devices and retrieves their mac addresses.
+# this script scans the local network for active devices, retrieves mac addresses, and checks for open ports.
 
 # function to get the local network range
 get_network_range() {
@@ -48,6 +48,32 @@ get_mac_addresses() {
     done
 }
 
+# function to check for open common ports on active devices
+check_open_ports() {
+    local active_devices=("$@")
+    declare -A common_ports=(
+        [21]="FTP"
+        [22]="SSH"
+        [23]="Telnet"
+        [25]="SMTP"
+        [53]="DNS"
+        [80]="HTTP"
+        [110]="POP3"
+        [143]="IMAP"
+        [443]="HTTPS"
+        [3389]="RDP"
+    )
+
+    echo -e "\nchecking for open ports on active devices..."
+    for ip in "${active_devices[@]}"; do
+        echo -e "\n$ip"
+        for port in "${!common_ports[@]}"; do
+            (echo > /dev/tcp/"$ip"/"$port") &> /dev/null && \
+                echo "Port $port is open - ${common_ports[$port]}"
+        done
+    done
+}
+
 # main script execution
 network_range=$(get_network_range)
 if [ -z "$network_range" ]; then
@@ -55,6 +81,7 @@ if [ -z "$network_range" ]; then
     exit 1
 fi
 
-# scan the network and retrieve MAC addresses
+# scan the network, retrieve MAC addresses, and check open ports
 active_devices=($(scan_network "$network_range"))
 get_mac_addresses "${active_devices[@]}"
+check_open_ports "${active_devices[@]}"
