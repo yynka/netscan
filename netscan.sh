@@ -1,6 +1,6 @@
 #!/bin/bash
 # netscan.sh
-# this script scans the local network for active devices, retrieves mac addresses, and checks for open ports.
+# this script scans the local network for active devices, retrieves mac addresses, checks for open ports, and provides a summary.
 
 # function to get the local network range
 get_network_range() {
@@ -38,14 +38,19 @@ get_mac_addresses() {
     # retrieve the ARP table
     arp_table=$(arp -n)
 
+    declare -A mac_addresses
     for ip in "${active_devices[@]}"; do
         mac=$(echo "$arp_table" | grep -w "$ip" | awk '{print $3}')
         if [ -n "$mac" ]; then
             echo "$ip - MAC Address: $mac"
+            mac_addresses["$ip"]="$mac"
         else
             echo "$ip - MAC Address: Not found"
+            mac_addresses["$ip"]="Not found"
         fi
     done
+
+    echo "${mac_addresses[@]}"
 }
 
 # function to check for open common ports on active devices
@@ -65,12 +70,34 @@ check_open_ports() {
     )
 
     echo -e "\nchecking for open ports on active devices..."
+    declare -A device_ports
     for ip in "${active_devices[@]}"; do
         echo -e "\n$ip"
+        open_ports=()
         for port in "${!common_ports[@]}"; do
             (echo > /dev/tcp/"$ip"/"$port") &> /dev/null && \
-                echo "Port $port is open - ${common_ports[$port]}"
+                open_ports+=("$port: ${common_ports[$port]}")
         done
+        if [ "${#open_ports[@]}" -gt 0 ]; then
+            echo "${open_ports[*]}"
+            device_ports["$ip"]="${open_ports[*]}"
+        else
+            echo "No open common ports"
+            device_ports["$ip"]="No open common ports"
+        fi
+    done
+
+    echo "${device_ports[@]}"
+}
+
+# function to display a summary of all active devices
+display_summary() {
+    local active_devices=("$@")
+    echo -e "\nsummary of active devices:"
+    for ip in "${active_devices[@]}"; do
+        mac="${mac_addresses[$ip]}"
+        ports="${device_ports[$ip]}"
+        echo "IP: $ip, MAC: $mac, Open Ports: $ports"
     done
 }
 
@@ -81,7 +108,8 @@ if [ -z "$network_range" ]; then
     exit 1
 fi
 
-# scan the network, retrieve MAC addresses, and check open ports
+# scan the network, retrieve MAC addresses, check open ports, and display a summary
 active_devices=($(scan_network "$network_range"))
-get_mac_addresses "${active_devices[@]}"
-check_open_ports "${active_devices[@]}"
+mac_addresses=$(get_mac_addresses "${active_devices[@]}")
+device_ports=$(check_open_ports "${active_devices[@]}")
+display_summary "${active_devices[@]}"
