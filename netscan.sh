@@ -1,115 +1,218 @@
 #!/bin/bash
+
 # netscan.sh
-# this script scans the local network for active devices, retrieves mac addresses, checks for open ports, and provides a summary.
+# Advanced network scanner for device discovery and service enumeration
+# Requires: ipcalc, curl, jq
 
-# function to get the local network range
-get_network_range() {
-    local_ip=$(hostname -I | awk '{print $1}')
-    subnet_mask=$(ip -o -f inet addr show | grep "$local_ip" | awk '{print $4}')
-    echo "$subnet_mask"
-}
+# Common ports with service names
+declare -A COMMON_PORTS=(
+    [20]="FTP-Data" [21]="FTP" [22]="SSH" [23]="Telnet"
+    [25]="SMTP" [53]="DNS" [80]="HTTP" [110]="POP3"
+    [123]="NTP" [143]="IMAP" [161]="SNMP" [443]="HTTPS"
+    [445]="SMB" [3389]="RDP" [8080]="HTTP-Alt"
+)
 
-# function to scan the network range for active devices
-scan_network() {
-    local network_range=$1
-    echo "scanning network range: $network_range"
+# Default values
+SKIP_PORT_SCAN=false
+TIMEOUT=1
+OUTPUT_FILE=""
+MAC_VENDOR_API="https://api.macvendors.com"
+VERBOSE=true
 
-    # extract the base IP address
-    ip_base=$(echo "$network_range" | sed 's/[0-9]*\/[0-9]*$//')
-    active_devices=()
-
-    # loop through addresses 1-254 to find active devices
-    for i in {1..254}; do
-        ip="${ip_base}${i}"
-        if ping -c 1 -W 1 "$ip" &> /dev/null; then
-            echo "$ip is active"
-            active_devices+=("$ip")
-        fi
-    done
-
-    echo "${active_devices[@]}"
-}
-
-# function to retrieve MAC addresses for active devices
-get_mac_addresses() {
-    local active_devices=("$@")
-    echo -e "\nretrieving mac addresses for active devices..."
-    
-    # retrieve the ARP table
-    arp_table=$(arp -n)
-
-    declare -A mac_addresses
-    for ip in "${active_devices[@]}"; do
-        mac=$(echo "$arp_table" | grep -w "$ip" | awk '{print $3}')
-        if [ -n "$mac" ]; then
-            echo "$ip - MAC Address: $mac"
-            mac_addresses["$ip"]="$mac"
-        else
-            echo "$ip - MAC Address: Not found"
-            mac_addresses["$ip"]="Not found"
-        fi
-    done
-
-    echo "${mac_addresses[@]}"
-}
-
-# function to check for open common ports on active devices
-check_open_ports() {
-    local active_devices=("$@")
-    declare -A common_ports=(
-        [21]="FTP"
-        [22]="SSH"
-        [23]="Telnet"
-        [25]="SMTP"
-        [53]="DNS"
-        [80]="HTTP"
-        [110]="POP3"
-        [143]="IMAP"
-        [443]="HTTPS"
-        [3389]="RDP"
-    )
-
-    echo -e "\nchecking for open ports on active devices..."
-    declare -A device_ports
-    for ip in "${active_devices[@]}"; do
-        echo -e "\n$ip"
-        open_ports=()
-        for port in "${!common_ports[@]}"; do
-            (echo > /dev/tcp/"$ip"/"$port") &> /dev/null && \
-                open_ports+=("$port: ${common_ports[$port]}")
-        done
-        if [ "${#open_ports[@]}" -gt 0 ]; then
-            echo "${open_ports[*]}"
-            device_ports["$ip"]="${open_ports[*]}"
-        else
-            echo "No open common ports"
-            device_ports["$ip"]="No open common ports"
-        fi
-    done
-
-    echo "${device_ports[@]}"
-}
-
-# function to display a summary of all active devices
-display_summary() {
-    local active_devices=("$@")
-    echo -e "\nsummary of active devices:"
-    for ip in "${active_devices[@]}"; do
-        mac="${mac_addresses[$ip]}"
-        ports="${device_ports[$ip]}"
-        echo "IP: $ip, MAC: $mac, Open Ports: $ports"
-    done
-}
-
-# main script execution
-network_range=$(get_network_range)
-if [ -z "$network_range" ]; then
-    echo "could not determine network range. please check your connection."
+# Usage function
+usage() {
+    echo "Usage: $0 [-s] [-t timeout] [-o output_file] [-q]"
+    echo "  -s: Skip port scan"
+    echo "  -t: Timeout in milliseconds (default: 1000)"
+    echo "  -o: Output file (CSV format)"
+    echo "  -q: Quiet mode"
     exit 1
+}
+
+# Parse arguments
+while getopts "st:o:qh" opt; do
+    case $opt in
+        s) SKIP_PORT_SCAN=true ;;
+        t) TIMEOUT=$((OPTARG/1000)) ;;
+        o) OUTPUT_FILE="$OPTARG" ;;
+        q) VERBOSE=false ;;
+        h) usage ;;
+        *) usage ;;
+    esac
+done
+
+# Logging function
+log() {
+    local level=$1
+    local message=$2
+    local color=$3
+    
+    if [ "$VERBOSE" = true ]; then
+        echo -e "\e[${color}m[${level}] ${message}\e[0m"
+    fi
+}
+
+# Get network interface and range
+get_network_range() {
+    if ! command -v ipcalc >/dev/null 2>&1; then
+        log "*" "ipcalc is required but not installed. Please install it first." "31"
+        exit 1
+    }
+
+    local interface=$(ip -o -4 route show to default | awk '{print $5}')
+    if [ -z "$interface" ]; then
+        log "*" "No valid network interface found" "31"
+        exit 1
+    }
+
+    local ip_info=$(ip -o -4 addr show "$interface" | awk '{print $4}')
+    local ip_addr=${ip_info%/*}
+    local prefix=${ip_info#*/}
+    local network=$(ipcalc -n "$ip_info" | grep "Network:" | awk '{print $2}')
+    
+    echo "$network|$prefix|$ip_addr|$interface"
+}
+
+# MAC vendor lookup function
+get_mac_vendor() {
+    local mac=$1
+    local oui=${mac//:/}
+    oui=${oui:0:6}
+    oui=${oui^^}
+    
+    if [ -n "$oui" ]; then
+        local vendor
+        vendor=$(curl -s "$MAC_VENDOR_API/$oui" 2>/dev/null)
+        if [ $? -eq 0 ] && [ -n "$vendor" ] && [[ ! "$vendor" =~ "error" ]]; then
+            echo "$vendor"
+        else
+            echo "Unknown"
+        fi
+    else
+        echo "Unknown"
+    fi
+}
+
+# Function to scan network for active hosts
+scan_network() {
+    local network_info=$1
+    local network=${network_info%|*|*|*}
+    local prefix=${network_info#*|};prefix=${prefix%|*|*}
+    
+    log "*" "Starting network scan on network $network/$prefix" "36"
+    
+    # Calculate host range
+    local hosts=$((2**(32-prefix) - 2))
+    local base_ip=${network%.*}
+    local start_ip=${network##*.}
+    
+    # Create temporary directory for scan results
+    local tmp_dir=$(mktemp -d)
+    trap 'rm -rf "$tmp_dir"' EXIT
+    
+    # Parallel ping sweep
+    for i in $(seq 1 $hosts); do
+        local ip="$base_ip.$((start_ip + i))"
+        (ping -c 1 -W 1 "$ip" >/dev/null 2>&1 && echo "$ip" > "$tmp_dir/$i") &
+        
+        # Limit parallel processes
+        [ $((i % 50)) -eq 0 ] && wait
+    done
+    wait
+    
+    # Collect results
+    find "$tmp_dir" -type f -exec cat {} \;
+}
+
+# Function to get device information
+get_device_info() {
+    local ip=$1
+    local hostname=$(getent hosts "$ip" | awk '{print $2}')
+    [ -z "$hostname" ] && hostname="N/A"
+    
+    local mac=$(ip neigh show "$ip" | awk '{print $5}')
+    local vendor="Unknown"
+    
+    if [ -n "$mac" ] && [[ "$mac" =~ ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$ ]]; then
+        vendor=$(get_mac_vendor "$mac")
+    else
+        mac="N/A"
+    fi
+    
+    echo "$hostname|$mac|$vendor"
+}
+
+# Function to scan ports
+scan_ports() {
+    local ip=$1
+    local open_ports=()
+    local tmp_dir=$(mktemp -d)
+    trap 'rm -rf "$tmp_dir"' EXIT
+    
+    log "*" "Scanning ports on $ip (timeout: ${TIMEOUT}s)" "36"
+    
+    # Parallel port scanning
+    for port in "${!COMMON_PORTS[@]}"; do
+        (timeout "$TIMEOUT" bash -c "echo >/dev/tcp/$ip/$port" 2>/dev/null && \
+            echo "$port (${COMMON_PORTS[$port]})" > "$tmp_dir/$port") &
+    done
+    wait
+    
+    # Collect results
+    while read -r port_file; do
+        if [ -f "$port_file" ]; then
+            local port_info=$(cat "$port_file")
+            open_ports+=("$port_info")
+            log "+" "$ip - Port $port_info open" "32"
+        fi
+    done < <(find "$tmp_dir" -type f)
+    
+    # Join results with commas
+    (IFS=,; echo "${open_ports[*]}")
+}
+
+# Main execution
+network_info=$(get_network_range)
+log "*" "Network Information: ${network_info//|/, }" "36"
+
+# Create CSV header if output file specified
+if [ -n "$OUTPUT_FILE" ]; then
+    echo "IP Address,Hostname,MAC Address,Vendor,Open Ports" > "$OUTPUT_FILE"
 fi
 
-# scan the network, retrieve MAC addresses, check open ports, and display a summary
-active_devices=($(scan_network "$network_range"))
-mac_addresses=$(get_mac_addresses "${active_devices[@]}")
-device_ports=$(check_open_ports "${active_devices[@]}")
-display_summary "${active_devices[@]}"
+# Scan for active hosts
+mapfile -t active_hosts < <(scan_network "$network_info")
+
+# Process each active host
+for ip in "${active_hosts[@]}"; do
+    if [ -n "$ip" ]; then
+        log "+" "Found active host: $ip" "32"
+        
+        # Get device information
+        IFS='|' read -r hostname mac vendor <<< "$(get_device_info "$ip")"
+        
+        # Scan ports if not skipped
+        if [ "$SKIP_PORT_SCAN" = false ]; then
+            open_ports=$(scan_ports "$ip")
+        else
+            open_ports="N/A"
+        fi
+        
+        # Output results
+        if [ "$VERBOSE" = true ]; then
+            echo -e "\e[32m[+] $ip ($hostname):\e[0m"
+            echo "    MAC: $mac"
+            echo "    Vendor: $vendor"
+            echo "    Open Ports: $open_ports"
+        fi
+        
+        # Save to CSV if output file specified
+        if [ -n "$OUTPUT_FILE" ]; then
+            echo "$ip,$hostname,$mac,$vendor,\"$open_ports\"" >> "$OUTPUT_FILE"
+        fi
+    fi
+done
+
+if [ -n "$OUTPUT_FILE" ]; then
+    log "*" "Results exported to $OUTPUT_FILE" "36"
+fi
