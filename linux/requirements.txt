@@ -1,0 +1,25 @@
+System Packages
+python3-gi  # GTK interface
+python3-nmap  # Network scanning
+nmap  # Network scanning backend
+python3-dev  # Required for compiling some Python packages
+libkrb5-dev  # Required for WinRM authentication
+libssl-dev  # Required for crypto operations
+build-essential  # Required for compiling
+Python Packages
+python-nmap==0.7.1  # Network scanning
+netifaces==0.11.0  # Network interface handling
+psutil==5.9.4  # System and process utilities
+paramiko==3.1.0  # SSH client for Linux systems
+pysnmp==4.4.12  # SNMP protocol support
+pywinrm==0.4.3  # Windows Remote Management
+smbprotocol==1.10.0  # SMB protocol support
+wmi==1.5.1  # Windows Management Instrumentation
+impacket==0.11.0  # Network protocols implementation
+python-gtk3==3.0.0  # GTK3 bindings for Python
+Installation Commands
+System packages
+sudo apt-get update
+sudo apt-get install -y python3-gi python3-nmap nmap python3-dev libkrb5-dev libssl-dev build-essential
+Python packages
+pip3 install python-nmap==0.7.1 netifaces==0.11.0 psutil==5.9.4 paramiko==3.1.0 pysnmp==4.4.12 pywinrm==0.4.3 smbprotocol==1.10.0 wmi==1.5.1 impacket==0.11.0 python-gtk3==3.0.0
