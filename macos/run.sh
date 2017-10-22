@@ -1,41 +1,56 @@
 #!/bin/bash
-# run.sh
-# macOS network scanner for discovering active devices on the local network.
 
-# function to get the local network range
+# run.sh
+# this script scans the local network for active devices and retrieves their MAC addresses.
+
+# function to get the local IP address and subnet mask to figure out the network range
 get_network_range() {
-    local interface=$(route get default | grep 'interface:' | awk '{print $2}')
-    local ip_info=$(ifconfig "$interface" | grep 'inet ' | awk '{print $2, $4}')
+    local interface=$(route -n get default | grep interface | awk '{print $2}')
+    if [ -z "$interface" ]; then
+        echo "No valid network interface found" >&2
+        exit 1
+    fi
+
+    local ip_info=$(ifconfig "$interface" | grep "inet " | awk '{print $2, $4}')
     local ip_address=$(echo "$ip_info" | awk '{print $1}')
     local subnet_mask=$(echo "$ip_info" | awk '{print $2}')
-    
-    # convert subnet mask to CIDR prefix
-    local cidr_prefix=$(echo "$subnet_mask" | awk -F. '{print $1, $2, $3, $4}' | \
-        awk '{print ($1 * 16777216 + $2 * 65536 + $3 * 256 + $4)}' | \
-        awk '{for (i = 31; i >= 0; i--) { if (and($1, lshift(1, i))) { print 32 - i; exit } }}')
-    
-    echo "$ip_address/$cidr_prefix"
+    local cidr=$(ipcalc -c "$ip_address" "$subnet_mask" | grep -oE "CIDR: [^/]+" | awk '{print $2}')
+
+    echo "$ip_address/$cidr"
 }
 
-# function to scan the network for active devices
+# function to scan the network range and find active devices
 scan_network() {
-    local network_range="$1"
-    local ip_base=$(echo "$network_range" | cut -d '/' -f 1 | sed 's/\.[0-9]*$//')
+    local network_range=$1
     echo "scanning network range: $network_range"
 
-    for i in {1..254}; do
-        local ip="$ip_base.$i"
-        if ping -c 1 -W 1 "$ip" >/dev/null 2>&1; then
-            echo "$ip is active"
+    local active_devices=()
+
+    # ping sweep to find active devices
+    for ip in $(nmap -sn "$network_range" | grep "Nmap scan report" | awk '{print $NF}' | tr -d '()'); do
+        echo "$ip is active"
+        active_devices+=("$ip")
+    done
+
+    echo "${active_devices[@]}"
+}
+
+# function to retrieve the MAC address of each active device
+get_mac_address() {
+    local active_devices=("$@")
+
+    echo -e "\nretrieving MAC addresses for active devices..."
+    for ip in "${active_devices[@]}"; do
+        local mac=$(arp -n "$ip" | grep "$ip" | awk '{print $3}')
+        if [ -n "$mac" ]; then
+            echo "$ip - MAC Address: $mac"
+        else
+            echo "$ip - MAC Address: Not found"
         fi
     done
 }
 
-# main execution
+# main script execution
 network_range=$(get_network_range)
-if [ -z "$network_range" ]; then
-    echo "error: could not determine network range."
-    exit 1
-fi
-
-scan_network "$network_range"
+active_devices=$(scan_network "$network_range")
+get_mac_address "${active_devices[@]}"
