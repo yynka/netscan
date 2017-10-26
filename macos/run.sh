@@ -1,47 +1,46 @@
 #!/bin/bash
 
 # run.sh
-# this script scans the local network for active devices, retrieves MAC addresses, and checks for open ports.
+# This script scans the local network for active devices, retrieves MAC addresses, checks for open ports, and provides a summary.
 
-# function to get the local IP address and subnet mask to figure out the network range
+# Get the local IP address and subnet mask to figure out the network range
 get_network_range() {
-    local interface=$(route -n get default | grep interface | awk '{print $2}')
+    local interface=$(ipconfig getifaddr en0)
     if [ -z "$interface" ]; then
-        echo "No valid network interface found" >&2
+        echo "No valid network interface found"
         exit 1
     fi
 
-    local ip_info=$(ifconfig "$interface" | grep "inet " | awk '{print $2, $4}')
-    local ip_address=$(echo "$ip_info" | awk '{print $1}')
-    local subnet_mask=$(echo "$ip_info" | awk '{print $2}')
-    local cidr=$(ipcalc -c "$ip_address" "$subnet_mask" | grep -oE "CIDR: [^/]+" | awk '{print $2}')
-
-    echo "$ip_address/$cidr"
+    local subnet_mask=$(ifconfig en0 | grep 'netmask' | awk '{ print $4 }')
+    local prefix=$(echo "$subnet_mask" | awk -F '.' '{print ($1*16777216 + $2*65536 + $3*256 + $4)*1}')
+    echo "$interface/$prefix"
 }
 
-# function to scan the network range and find active devices
+# Perform a network scan by pinging each IP in the range and checking which ones respond
 scan_network() {
     local network_range=$1
-    echo "scanning network range: $network_range"
+    echo "Scanning network range: $network_range"
 
+    local ip_base=$(echo $network_range | awk -F '.' '{OFS="."; print $1, $2, $3, ""}')
     local active_devices=()
 
-    # ping sweep to find active devices
-    for ip in $(nmap -sn "$network_range" | grep "Nmap scan report" | awk '{print $NF}' | tr -d '()'); do
-        echo "$ip is active"
-        active_devices+=("$ip")
+    for i in {1..254}; do
+        local ip="$ip_base$i"
+        if ping -c 1 -W 1 $ip >/dev/null 2>&1; then
+            active_devices+=("$ip")
+            echo "$ip is active"
+        fi
     done
-
     echo "${active_devices[@]}"
 }
 
-# function to retrieve MAC addresses for active devices
-get_mac_address() {
-    local active_devices=("$@")
+# Retrieve MAC addresses for each active device using arp
+get_mac_addresses() {
+    local active_devices=($@)
+    echo -e "\nRetrieving MAC addresses for active devices..."
 
-    echo -e "\nretrieving MAC addresses for active devices..."
     for ip in "${active_devices[@]}"; do
-        local mac=$(arp -n "$ip" | grep "$ip" | awk '{print $3}')
+        local mac=$(arp -n $ip | awk '/ether/ {print $3}')
         if [ -n "$mac" ]; then
             echo "$ip - MAC Address: $mac"
         else
@@ -50,30 +49,50 @@ get_mac_address() {
     done
 }
 
-# function to check for open common ports
+# Check for open common ports on each active device
 check_open_ports() {
-    local active_devices=("$@")
-
+    local active_devices=($@)
     declare -A common_ports=(
-        [21]="FTP" [22]="SSH" [23]="Telnet"
-        [25]="SMTP" [53]="DNS" [80]="HTTP"
-        [110]="POP3" [143]="IMAP" [443]="HTTPS"
+        [21]="FTP"
+        [22]="SSH"
+        [23]="Telnet"
+        [25]="SMTP"
+        [53]="DNS"
+        [80]="HTTP"
+        [110]="POP3"
+        [143]="IMAP"
+        [443]="HTTPS"
         [3389]="RDP"
     )
 
-    echo -e "\nchecking for open ports on active devices..."
+    echo -e "\nChecking for open ports on active devices..."
+
     for ip in "${active_devices[@]}"; do
         echo -e "\n$ip"
         for port in "${!common_ports[@]}"; do
-            if nc -z -w1 "$ip" "$port" &>/dev/null; then
+            if nc -z -w 1 $ip $port 2>/dev/null; then
                 echo "Port $port is open - ${common_ports[$port]}"
             fi
         done
     done
 }
 
-# main script execution: get the network range, scan for devices, retrieve MAC addresses, and check open ports
+# Display a summary of all active devices
+display_summary() {
+    local active_devices=($@)
+    echo -e "\nSummary of active devices:"
+
+    for ip in "${active_devices[@]}"; do
+        local mac=$(arp -n $ip | awk '/ether/ {print $3}')
+        [ -z "$mac" ] && mac="Not found"
+
+        echo "IP: $ip, MAC: $mac"
+    done
+}
+
+# Main script execution
 network_range=$(get_network_range)
-active_devices=$(scan_network "$network_range")
-get_mac_address "${active_devices[@]}"
+active_devices=($(scan_network $network_range))
+get_mac_addresses "${active_devices[@]}"
 check_open_ports "${active_devices[@]}"
+display_summary "${active_devices[@]}"
