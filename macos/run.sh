@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # run.sh
-# This script scans the local network for active devices, retrieves MAC addresses, checks for open ports, and provides a summary.
+# Enhanced network scanner for macOS. Scans the local network for active devices, retrieves MAC addresses, checks for open ports, monitors services, and provides a GUI for viewing device details.
+
+# Ensure required tools are installed
+if ! command -v ipconfig >/dev/null || ! command -v ifconfig >/dev/null || ! command -v arp >/dev/null || ! command -v nc >/dev/null || ! command -v osascript >/dev/null; then
+    echo "This script requires ipconfig, ifconfig, arp, nc, and osascript. Ensure they are installed."
+    exit 1
+fi
 
 # Get the local IP address and subnet mask to figure out the network range
 get_network_range() {
@@ -12,8 +18,8 @@ get_network_range() {
     fi
 
     local subnet_mask=$(ifconfig en0 | grep 'netmask' | awk '{ print $4 }')
-    local prefix=$(echo "$subnet_mask" | awk -F '.' '{print ($1*16777216 + $2*65536 + $3*256 + $4)*1}')
-    echo "$interface/$prefix"
+    local cidr_prefix=$(echo "$subnet_mask" | awk -F '.' '{print (log(2^32 - ($1*16777216 + $2*65536 + $3*256 + $4))/log(2))}')
+    echo "$interface/$cidr_prefix"
 }
 
 # Perform a network scan by pinging each IP in the range and checking which ones respond
@@ -21,7 +27,7 @@ scan_network() {
     local network_range=$1
     echo "Scanning network range: $network_range"
 
-    local ip_base=$(echo $network_range | awk -F '.' '{OFS="."; print $1, $2, $3, ""}')
+    local ip_base=$(echo $network_range | awk -F '/' '{print $1}' | awk -F '.' '{OFS="."; print $1, $2, $3, ""}')
     local active_devices=()
 
     for i in {1..254}; do
@@ -34,15 +40,19 @@ scan_network() {
     echo "${active_devices[@]}"
 }
 
-# Retrieve MAC addresses for each active device using arp
+# Retrieve MAC addresses and vendor details for each active device using arp
 get_mac_addresses() {
     local active_devices=($@)
-    echo -e "\nRetrieving MAC addresses for active devices..."
+    echo -e "\nRetrieving MAC addresses and vendor details for active devices..."
 
     for ip in "${active_devices[@]}"; do
         local mac=$(arp -n $ip | awk '/ether/ {print $3}')
+        local vendor="Unknown"
+
         if [ -n "$mac" ]; then
-            echo "$ip - MAC Address: $mac"
+            # Retrieve vendor information using a hypothetical local database or online API
+            vendor=$(curl -s "https://api.macvendors.com/$mac" || echo "Unknown")
+            echo "$ip - MAC Address: $mac, Vendor: $vendor"
         else
             echo "$ip - MAC Address: Not found"
         fi
@@ -78,7 +88,7 @@ check_open_ports() {
 }
 
 # Display a summary of all active devices
-display_summary() {
+summarize_devices() {
     local active_devices=($@)
     echo -e "\nSummary of active devices:"
 
@@ -90,9 +100,30 @@ display_summary() {
     done
 }
 
+# Show device details in a macOS GUI
+show_device_monitor() {
+    local active_devices=($@)
+    echo -e "\nLaunching macOS device monitor..."
+
+    # Prepare AppleScript content
+    local details=""
+    for ip in "${active_devices[@]}"; do
+        local mac=$(arp -n $ip | awk '/ether/ {print $3}')
+        details+="IP: $ip\nMAC: ${mac:-Not found}\n\n"
+    done
+
+    osascript <<EOF
+    tell application "System Events"
+        activate
+        display dialog "Device Monitor:\n\n$details" buttons {"OK"} default button "OK"
+    end tell
+EOF
+}
+
 # Main script execution
 network_range=$(get_network_range)
 active_devices=($(scan_network $network_range))
 get_mac_addresses "${active_devices[@]}"
 check_open_ports "${active_devices[@]}"
-display_summary "${active_devices[@]}"
+summarize_devices "${active_devices[@]}"
+show_device_monitor "${active_devices[@]}"
