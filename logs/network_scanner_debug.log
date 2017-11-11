@@ -1,0 +1,2285 @@
+2025-01-10 17:21:31,973 - INFO - Starting enhanced network scanner...
+2025-01-10 17:21:31,973 - INFO - Arguments: Namespace(monitor=False, refresh=300, log_path='/Users/collin/netscan/logs', username='collin', password='nano', ssh_port=22, winrm_port=5985, debug=True)
+2025-01-10 17:21:31,987 - INFO - Initialized NetworkScanner with log_path=/Users/collin/netscan/logs, ssh_port=22
+2025-01-10 17:21:31,987 - INFO - Available interfaces: ['lo0', 'gif0', 'stf0', 'anpi1', 'anpi0', 'en3', 'en4', 'en1', 'en2', 'bridge0', 'ap1', 'en0', 'awdl0', 'llw0', 'utun0', 'utun1', 'utun2', 'utun3', 'utun4', 'utun5']
+2025-01-10 17:21:31,987 - INFO - Selected interface en0: IP=192.168.0.141, Netmask=255.255.255.0
+2025-01-10 17:21:31,987 - INFO - Network range result: {'Base': '192.168.0.0', 'Prefix': 24, 'Interface': '192.168.0.141'}
+2025-01-10 17:21:31,987 - INFO - Network range determined: {'Base': '192.168.0.0', 'Prefix': 24, 'Interface': '192.168.0.141'}
+2025-01-10 17:21:31,988 - INFO - Starting network scan on 192.168.0.141/24
+2025-01-10 17:21:31,988 - INFO - Running arp -a to find devices
+2025-01-10 17:21:32,175 - INFO - ARP output: arrisbcm (192.168.0.1) at c0:94:35:29:ef:a8 on en0 ifscope [ethernet]
+mr60 (192.168.0.14) at 10:c:6b:e:cb:d1 on en0 ifscope [ethernet]
+iphone (192.168.0.79) at 32:4:fe:48:3:18 on en0 ifscope [ethernet]
+? (192.168.0.255) at ff:ff:ff:ff:ff:ff on en0 ifscope [ethernet]
+mdns.mcast.net (224.0.0.251) at 1:0:5e:0:0:fb on en0 ifscope permanent [ethernet]
+
+2025-01-10 17:21:32,175 - INFO - Found device in ARP: 192.168.0.1
+2025-01-10 17:21:32,175 - INFO - Found device in ARP: 192.168.0.14
+2025-01-10 17:21:32,175 - INFO - Found device in ARP: 192.168.0.79
+2025-01-10 17:21:32,175 - INFO - Found device in ARP: 192.168.0.255
+2025-01-10 17:21:32,175 - INFO - Starting ping sweep
+2025-01-10 17:21:32,191 - INFO - Found active host: 192.168.0.1 (hostname: 1.0.168.192.in-addr.arpa)
+2025-01-10 17:21:45,379 - INFO - Found active host: 192.168.0.14 (hostname: 14.0.168.192.in-addr.arpa)
+2025-01-10 17:22:04,776 - INFO - Found active host: 192.168.0.34 (hostname: 34.0.168.192.in-addr.arpa)
+2025-01-10 17:22:49,462 - INFO - Found active host: 192.168.0.79 (hostname: 79.0.168.192.in-addr.arpa)
+2025-01-10 17:23:10,809 - INFO - Found active host: 192.168.0.101 (hostname: 101.0.168.192.in-addr.arpa)
+2025-01-10 17:23:50,345 - INFO - Found active host: 192.168.0.141 (hostname: 141.0.168.192.in-addr.arpa)
+2025-01-10 17:25:39,911 - INFO - Found active host: 192.168.0.250 (hostname: 250.0.168.192.in-addr.arpa)
+2025-01-10 17:25:43,985 - INFO - Running detailed nmap scan on 192.168.0.1
+2025-01-10 17:25:44,086 - INFO - Nmap confirmed 192.168.0.1 is active
+2025-01-10 17:25:44,086 - INFO - Running detailed nmap scan on 192.168.0.14
+2025-01-10 17:25:44,140 - INFO - Nmap confirmed 192.168.0.14 is active
+2025-01-10 17:25:44,141 - INFO - Running detailed nmap scan on 192.168.0.34
+2025-01-10 17:25:44,234 - INFO - Nmap confirmed 192.168.0.34 is active
+2025-01-10 17:25:44,235 - INFO - Running detailed nmap scan on 192.168.0.79
+2025-01-10 17:25:44,309 - INFO - Nmap confirmed 192.168.0.79 is active
+2025-01-10 17:25:44,310 - INFO - Running detailed nmap scan on 192.168.0.101
+2025-01-10 17:25:44,467 - INFO - Nmap confirmed 192.168.0.101 is active
+2025-01-10 17:25:44,467 - INFO - Running detailed nmap scan on 192.168.0.141
+2025-01-10 17:25:44,493 - INFO - Nmap confirmed 192.168.0.141 is active
+2025-01-10 17:25:44,494 - INFO - Running detailed nmap scan on 192.168.0.250
+2025-01-10 17:25:44,641 - INFO - Nmap confirmed 192.168.0.250 is active
+2025-01-10 17:25:44,641 - INFO - Found 7 active devices
+2025-01-10 17:25:44,641 - INFO - 
+Profiling device: 192.168.0.1
+2025-01-10 17:25:44,641 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.1
+==================================================
+2025-01-10 17:25:44,642 - INFO - Getting basic info for 192.168.0.1
+2025-01-10 17:25:44,672 - INFO - Hostname resolved: 1.0.168.192.in-addr.arpa
+2025-01-10 17:25:44,672 - INFO - Testing host accessibility for 192.168.0.1
+2025-01-10 17:25:44,684 - INFO - Host 192.168.0.1 is responding to ping
+2025-01-10 17:25:44,684 - INFO - Getting MAC address for 192.168.0.1
+2025-01-10 17:25:44,689 - DEBUG - ARP output: ? (192.168.0.1) at c0:94:35:29:ef:a8 on en0 ifscope [ethernet]
+
+2025-01-10 17:25:44,689 - INFO - MAC address found: c0:94:35:29:ef:a8
+2025-01-10 17:25:44,690 - INFO - Looking up vendor for MAC: c0:94:35:29:ef:a8
+2025-01-10 17:25:45,319 - INFO - Vendor found: Commscope
+2025-01-10 17:25:45,320 - INFO - Vendor found: Commscope
+2025-01-10 17:25:45,320 - INFO - Running nmap OS detection for 192.168.0.1
+2025-01-10 17:27:07,872 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "arrisbcm",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.1",
+    "mac": "C0:94:35:29:EF:A8"
+  },
+  "vendor": {
+    "C0:94:35:29:EF:A8": "Arris Group"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "uptime": {
+    "seconds": "326678",
+    "lastboot": "Mon Jan  6 22:42:29 2025"
+  },
+  "tcp": {
+    "22": {
+      "state": "filtered",
+      "reason": "no-response",
+      "name": "ssh",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "23": {
+      "state": "filtered",
+      "reason": "no-response",
+      "name": "telnet",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "53": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "domain",
+      "product": "dnsmasq",
+      "version": "2.83",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:thekelleys:dnsmasq:2.83",
+      "script": {
+        "dns-nsid": "\n  bind.version: dnsmasq-2.83"
+      }
+    },
+    "80": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "http",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "http-title": "Did not follow redirect to https://arrisbcm/",
+        "fingerprint-strings": "\n  FourOhFourRequest: \n    HTTP/1.0 301 Moved Permanently\n    Location: https:///nice%20ports%2C/Tri%6Eity.txt%2ebak\n    Content-Length: 0\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:25:59 GMT\n    Server: Xfinity Broadband Router Server\n  GenericLines: \n    HTTP/1.0 400 Bad Request\n    Content-Type: text/html\n    Content-Length: 345\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:25:59 GMT\n    Server: Xfinity Broadband Router Server\n    <?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n    <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n    <head>\n    <title>400 Bad Request</title>\n    </head>\n    <body>\n    <h1>400 Bad Request</h1>\n    </body>\n    </html>\n  GetRequest: \n    HTTP/1.0 301 Moved Permanently\n    Location: https:///\n    Content-Length: 0\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:25:53 GMT\n    Server: Xfinity Broadband Router Server\n  HTTPOptions: \n    HTTP/1.0 301 Moved Permanently\n    Location: https:///\n    Content-Length: 0\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:25:54 GMT\n    Server: Xfinity Broadband Router Server\n  RTSPRequest: \n    HTTP/1.0 400 Bad Request\n    Content-Type: text/html\n    Content-Length: 345\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:25:54 GMT\n    Server: Xfinity Broadband Router Server\n    <?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n    <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n    <head>\n    <title>400 Bad Request</title>\n    </head>\n    <body>\n    <h1>400 Bad Request</h1>\n    </body>\n    </html>"
+      }
+    },
+    "443": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "https",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "ssl-date": "TLS randomness does not represent time",
+        "http-title": "ARRIS\nRequested resource was /login.php",
+        "ssl-cert": "Subject: commonName=0000BC289879/organizationName=ARRIS Group, Inc./countryName=US\nSubject Alternative Name: URI:urn:bbf:usp:id:self::0000BC289879\nNot valid before: 2021-01-21T20:59:13\nNot valid after:  2041-01-21T20:59:12",
+        "fingerprint-strings": "\n  FourOhFourRequest: \n    HTTP/1.0 302 Found\n    Set-Cookie: PHPSESSID=46snl36a9c1qld39dnqd92qs6pojki26; path=/; secure; HttpOnly; SameSite=Strict\n    Expires: Thu, 19 Nov 1981 08:52:00 GMT\n    Pragma: no-cache\n    Cache-Control: no-store, no-cache, must-revalidate\n    X-XSS-Protection: 1; mode=block\n    X-Permitted-Cross-Domain-Policies: None\n    strict-transport-security: max-age=600; includeSubDomains\n    Server: ARRIS Server\n    X-Frame-Options: DENY\n    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src blob:\n    Location: /custom/1/landing.php\n    Content-type: text/html; charset=utf-8\n    Content-Length: 10\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:02 GMT\n  GetRequest: \n    HTTP/1.0 302 Found\n    Set-Cookie: PHPSESSID=oab68mgpek2bfejmk3rinn08nskd234h; path=/; secure; HttpOnly; SameSite=Strict\n    Expires: Thu, 19 Nov 1981 08:52:00 GMT\n    Pragma: no-cache\n    Cache-Control: no-store, no-cache, must-revalidate\n    X-XSS-Protection: 1; mode=block\n    X-Permitted-Cross-Domain-Policies: None\n    strict-transport-security: max-age=600; includeSubDomains\n    Server: ARRIS Server\n    X-Frame-Options: DENY\n    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src blob:\n    Location: /custom/1/landing.php\n    Content-type: text/html; charset=utf-8\n    Content-Length: 10\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:02 GMT\n  HTTPOptions: \n    HTTP/1.0 302 Found\n    Set-Cookie: PHPSESSID=or27364ec1hucq54e9jn84kj3vfst72a; path=/; secure; HttpOnly; SameSite=Strict\n    Expires: Thu, 19 Nov 1981 08:52:00 GMT\n    Pragma: no-cache\n    Cache-Control: no-store, no-cache, must-revalidate\n    X-XSS-Protection: 1; mode=block\n    X-Permitted-Cross-Domain-Policies: None\n    strict-transport-security: max-age=600; includeSubDomains\n    Server: ARRIS Server\n    X-Frame-Options: DENY\n    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src blob:\n    Location: /custom/1/landing.php\n    Content-type: text/html; charset=utf-8\n    Content-Length: 10\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:02 GMT"
+      }
+    },
+    "8181": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "intermapper",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "ssl-date": "TLS randomness does not represent time",
+        "ssl-cert": "Subject: commonName=0000BC289879/organizationName=ARRIS Group, Inc./countryName=US\nSubject Alternative Name: URI:urn:bbf:usp:id:self::0000BC289879\nNot valid before: 2021-01-21T20:59:13\nNot valid after:  2041-01-21T20:59:12",
+        "fingerprint-strings": "\n  GenericLines: \n    HTTP/1.0 400 Bad Request\n    Content-Type: text/html\n    Content-Length: 345\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:00 GMT\n    Server: Xfinity Broadband Router Server\n    <?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n    <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n    <head>\n    <title>400 Bad Request</title>\n    </head>\n    <body>\n    <h1>400 Bad Request</h1>\n    </body>\n    </html>\n  GetRequest: \n    HTTP/1.0 302 Found\n    Set-Cookie: PHPSESSID=hkr9n3luh917voinj1eatq2uus745pd0; path=/; secure; HttpOnly; SameSite=Strict\n    Expires: Thu, 19 Nov 1981 08:52:00 GMT\n    Pragma: no-cache\n    Cache-Control: no-store, no-cache, must-revalidate\n    X-XSS-Protection: 1; mode=block\n    X-Permitted-Cross-Domain-Policies: None\n    strict-transport-security: max-age=600; includeSubDomains\n    Server: ARRIS Server\n    X-Frame-Options: DENY\n    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src blob:\n    Location: /custom/1/landing.php\n    Content-type: text/html; charset=utf-8\n    Content-Length: 10\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:01 GMT\n  HTTPOptions: \n    HTTP/1.0 302 Found\n    Set-Cookie: PHPSESSID=vrrld6487ocfh1h53dkfojrirpp30eft; path=/; secure; HttpOnly; SameSite=Strict\n    Expires: Thu, 19 Nov 1981 08:52:00 GMT\n    Pragma: no-cache\n    Cache-Control: no-store, no-cache, must-revalidate\n    X-XSS-Protection: 1; mode=block\n    X-Permitted-Cross-Domain-Policies: None\n    strict-transport-security: max-age=600; includeSubDomains\n    Server: ARRIS Server\n    X-Frame-Options: DENY\n    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src blob:\n    Location: /custom/1/landing.php\n    Content-type: text/html; charset=utf-8\n    Content-Length: 10\n    Connection: close\n    Date: Sat, 11 Jan 2025 00:26:02 GMT"
+      }
+    },
+    "9000": {
+      "state": "filtered",
+      "reason": "port-unreach",
+      "name": "cslistener",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "49152": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "upnp",
+      "product": "Portable SDK for UPnP devices",
+      "version": "1.6.22",
+      "extrainfo": "Linux 4.9.248-prod-21.3; UPnP 1.0",
+      "conf": "10",
+      "cpe": "cpe:/o:linux:linux_kernel:4.9.248-prod-21.3"
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "53"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    },
+    {
+      "state": "closed",
+      "proto": "udp",
+      "portid": "34094"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Linux 3.2 - 4.14",
+      "accuracy": "100",
+      "line": "68432",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-10 17:27:07,874 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:27:07,874 - INFO - Testing SSH access for 192.168.0.1
+2025-01-10 17:27:07,874 - INFO - Testing SSH access to 192.168.0.1:22
+2025-01-10 17:27:09,877 - INFO - SSH test result for 192.168.0.1:22 = False
+2025-01-10 17:27:09,877 - INFO - SSH accessible: False
+2025-01-10 17:27:09,878 - INFO - Device not accessible via SSH
+2025-01-10 17:27:09,878 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:27:09,878 - INFO - Completed device profiling for 192.168.0.1
+2025-01-10 17:27:09,878 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_1.json
+2025-01-10 17:27:09,881 - INFO - Profile saved successfully
+2025-01-10 17:27:09,882 - INFO - Profile saved for 192.168.0.1
+2025-01-10 17:27:09,882 - INFO - 
+Profiling device: 192.168.0.14
+2025-01-10 17:27:09,882 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.14
+==================================================
+2025-01-10 17:27:09,882 - INFO - Getting basic info for 192.168.0.14
+2025-01-10 17:27:09,893 - INFO - Hostname resolved: 14.0.168.192.in-addr.arpa
+2025-01-10 17:27:09,893 - INFO - Testing host accessibility for 192.168.0.14
+2025-01-10 17:27:10,905 - WARNING - Host 192.168.0.14 is not responding to ping
+2025-01-10 17:27:10,905 - WARNING - Host 192.168.0.14 is not responding to basic connectivity tests
+2025-01-10 17:27:10,906 - INFO - Getting MAC address for 192.168.0.14
+2025-01-10 17:27:10,914 - DEBUG - ARP output: ? (192.168.0.14) at 10:c:6b:e:cb:d1 on en0 ifscope [ethernet]
+
+2025-01-10 17:27:10,915 - INFO - MAC address found: 10:c:6b:e:cb:d1
+2025-01-10 17:27:10,915 - INFO - Looking up vendor for MAC: 10:c:6b:e:cb:d1
+2025-01-10 17:27:11,326 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:27:11,326 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:27:11,326 - INFO - Running nmap OS detection for 192.168.0.14
+2025-01-10 17:27:41,843 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "MR60",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.14",
+    "mac": "10:0C:6B:0E:CB:D1"
+  },
+  "vendor": {
+    "10:0C:6B:0E:CB:D1": "Netgear"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "portused": [],
+  "osmatch": []
+}
+2025-01-10 17:27:41,844 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:27:41,844 - INFO - Testing SSH access for 192.168.0.14
+2025-01-10 17:27:41,844 - INFO - Testing SSH access to 192.168.0.14:22
+2025-01-10 17:27:43,845 - INFO - SSH test result for 192.168.0.14:22 = False
+2025-01-10 17:27:43,846 - INFO - SSH accessible: False
+2025-01-10 17:27:43,846 - INFO - Device not accessible via SSH
+2025-01-10 17:27:43,846 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:27:43,846 - INFO - Completed device profiling for 192.168.0.14
+2025-01-10 17:27:43,847 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_14.json
+2025-01-10 17:27:43,849 - INFO - Profile saved successfully
+2025-01-10 17:27:43,850 - INFO - Profile saved for 192.168.0.14
+2025-01-10 17:27:43,850 - INFO - 
+Profiling device: 192.168.0.34
+2025-01-10 17:27:43,850 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.34
+==================================================
+2025-01-10 17:27:43,850 - INFO - Getting basic info for 192.168.0.34
+2025-01-10 17:27:43,859 - INFO - Hostname resolved: 34.0.168.192.in-addr.arpa
+2025-01-10 17:27:43,859 - INFO - Testing host accessibility for 192.168.0.34
+2025-01-10 17:27:44,003 - INFO - Host 192.168.0.34 is responding to ping
+2025-01-10 17:27:44,004 - INFO - Getting MAC address for 192.168.0.34
+2025-01-10 17:27:44,011 - DEBUG - ARP output: ? (192.168.0.34) at 18:93:7f:aa:da:34 on en0 ifscope [ethernet]
+
+2025-01-10 17:27:44,011 - INFO - MAC address found: 18:93:7f:aa:da:34
+2025-01-10 17:27:44,011 - INFO - Looking up vendor for MAC: 18:93:7f:aa:da:34
+2025-01-10 17:27:44,448 - INFO - Vendor found: AMPAK Technology, Inc.
+2025-01-10 17:27:44,449 - INFO - Vendor found: AMPAK Technology, Inc.
+2025-01-10 17:27:44,449 - INFO - Running nmap OS detection for 192.168.0.34
+2025-01-10 17:28:15,349 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "pvs6-ZT195085000549A0748",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.34",
+    "mac": "18:93:7F:AA:DA:34"
+  },
+  "vendor": {
+    "18:93:7F:AA:DA:34": "Ampak Technology"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "uptime": {
+    "seconds": "59557",
+    "lastboot": "Fri Jan 10 00:55:38 2025"
+  },
+  "tcp": {
+    "53": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "domain",
+      "product": "dnsmasq",
+      "version": "2.79",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:thekelleys:dnsmasq:2.79",
+      "script": {
+        "dns-nsid": "\n  bind.version: dnsmasq-2.79"
+      }
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "53"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Linux 3.10 - 4.11",
+      "accuracy": "97",
+      "line": "66652",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 3.16 - 4.6",
+      "accuracy": "97",
+      "line": "67504",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 3.2 - 4.14",
+      "accuracy": "97",
+      "line": "68432",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 4.4",
+      "accuracy": "97",
+      "line": "70849",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "97",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4.4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 3.13 - 4.4",
+      "accuracy": "91",
+      "line": "67146",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 3.8 - 3.16",
+      "accuracy": "91",
+      "line": "69380",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt Chaos Calmer 15.05 (Linux 3.18) or Designated Driver (Linux 4.1 or 4.4)",
+      "accuracy": "91",
+      "line": "69989",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.18"
+          ]
+        },
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4.1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 4.10",
+      "accuracy": "91",
+      "line": "70242",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4.10"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HP P2000 G3 NAS device",
+      "accuracy": "91",
+      "line": "37819",
+      "osclass": [
+        {
+          "type": "storage-misc",
+          "vendor": "HP",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/h:hp:p2000_g3"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Android 4.2.2 (Linux 3.4)",
+      "accuracy": "91",
+      "line": "33450",
+      "osclass": [
+        {
+          "type": "phone",
+          "vendor": "Google",
+          "osfamily": "Android",
+          "osgen": "4.2.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:google:android:4.2.2"
+          ]
+        },
+        {
+          "type": "phone",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "91",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.4"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-10 17:28:15,350 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:15,350 - INFO - Testing SSH access for 192.168.0.34
+2025-01-10 17:28:15,350 - INFO - Testing SSH access to 192.168.0.34:22
+2025-01-10 17:28:17,352 - INFO - SSH test result for 192.168.0.34:22 = False
+2025-01-10 17:28:17,353 - INFO - SSH accessible: False
+2025-01-10 17:28:17,353 - INFO - Device not accessible via SSH
+2025-01-10 17:28:17,353 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:17,353 - INFO - Completed device profiling for 192.168.0.34
+2025-01-10 17:28:17,354 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_34.json
+2025-01-10 17:28:17,355 - INFO - Profile saved successfully
+2025-01-10 17:28:17,355 - INFO - Profile saved for 192.168.0.34
+2025-01-10 17:28:17,355 - INFO - 
+Profiling device: 192.168.0.79
+2025-01-10 17:28:17,355 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.79
+==================================================
+2025-01-10 17:28:17,355 - INFO - Getting basic info for 192.168.0.79
+2025-01-10 17:28:17,364 - INFO - Hostname resolved: 79.0.168.192.in-addr.arpa
+2025-01-10 17:28:17,364 - INFO - Testing host accessibility for 192.168.0.79
+2025-01-10 17:28:18,376 - WARNING - Host 192.168.0.79 is not responding to ping
+2025-01-10 17:28:18,377 - WARNING - Host 192.168.0.79 is not responding to basic connectivity tests
+2025-01-10 17:28:18,377 - INFO - Getting MAC address for 192.168.0.79
+2025-01-10 17:28:18,385 - DEBUG - ARP output: ? (192.168.0.79) at 32:4:fe:48:3:18 on en0 ifscope [ethernet]
+
+2025-01-10 17:28:18,385 - INFO - MAC address found: 32:4:fe:48:3:18
+2025-01-10 17:28:18,385 - INFO - Looking up vendor for MAC: 32:4:fe:48:3:18
+2025-01-10 17:28:18,767 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:28:18,768 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:28:18,768 - INFO - Running nmap OS detection for 192.168.0.79
+2025-01-10 17:28:34,720 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "iPhone",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.79",
+    "mac": "32:04:FE:48:03:18"
+  },
+  "vendor": {},
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "tcp": {
+    "49152": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "tcpwrapped",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "8",
+      "cpe": ""
+    },
+    "62078": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "tcpwrapped",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "8",
+      "cpe": ""
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "62078"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    }
+  ],
+  "osmatch": []
+}
+2025-01-10 17:28:34,721 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:34,721 - INFO - Testing SSH access for 192.168.0.79
+2025-01-10 17:28:34,721 - INFO - Testing SSH access to 192.168.0.79:22
+2025-01-10 17:28:34,762 - INFO - SSH test result for 192.168.0.79:22 = False
+2025-01-10 17:28:34,762 - INFO - SSH accessible: False
+2025-01-10 17:28:34,762 - INFO - Device not accessible via SSH
+2025-01-10 17:28:34,762 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:34,762 - INFO - Completed device profiling for 192.168.0.79
+2025-01-10 17:28:34,762 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_79.json
+2025-01-10 17:28:34,762 - INFO - Profile saved successfully
+2025-01-10 17:28:34,762 - INFO - Profile saved for 192.168.0.79
+2025-01-10 17:28:34,762 - INFO - 
+Profiling device: 192.168.0.101
+2025-01-10 17:28:34,762 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.101
+==================================================
+2025-01-10 17:28:34,762 - INFO - Getting basic info for 192.168.0.101
+2025-01-10 17:28:34,771 - INFO - Hostname resolved: 101.0.168.192.in-addr.arpa
+2025-01-10 17:28:34,771 - INFO - Testing host accessibility for 192.168.0.101
+2025-01-10 17:28:34,787 - INFO - Host 192.168.0.101 is responding to ping
+2025-01-10 17:28:34,787 - INFO - Getting MAC address for 192.168.0.101
+2025-01-10 17:28:34,791 - DEBUG - ARP output: ? (192.168.0.101) at 74:a7:ea:a7:58:4f on en0 ifscope [ethernet]
+
+2025-01-10 17:28:34,791 - INFO - MAC address found: 74:a7:ea:a7:58:4f
+2025-01-10 17:28:34,791 - INFO - Looking up vendor for MAC: 74:a7:ea:a7:58:4f
+2025-01-10 17:28:35,224 - INFO - Vendor found: Amazon Technologies Inc.
+2025-01-10 17:28:35,225 - INFO - Vendor found: Amazon Technologies Inc.
+2025-01-10 17:28:35,225 - INFO - Running nmap OS detection for 192.168.0.101
+2025-01-10 17:28:48,645 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "amazon-88a5ba514",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.101",
+    "mac": "74:A7:EA:A7:58:4F"
+  },
+  "vendor": {
+    "74:A7:EA:A7:58:4F": "Amazon Technologies"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "uptime": {
+    "seconds": "1334596",
+    "lastboot": "Thu Dec 26 06:45:32 2024"
+  },
+  "tcp": {
+    "1080": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "socks5",
+      "product": "",
+      "version": "",
+      "extrainfo": "No authentication; connection failed",
+      "conf": "10",
+      "cpe": "",
+      "script": {
+        "socks-auth-info": "\n  No authentication"
+      }
+    },
+    "8009": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "http",
+      "product": "Amazon Whisperplay DIAL REST service",
+      "version": "",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:amazon:whisperplay",
+      "script": {
+        "ajp-methods": "Failed to get a valid response for the OPTION request",
+        "http-title": "Site doesn't have a title (text/plain)."
+      }
+    },
+    "8888": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "tcpwrapped",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "8",
+      "cpe": ""
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "1080"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    },
+    {
+      "state": "closed",
+      "proto": "udp",
+      "portid": "42065"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Android 9 - 10 (Linux 4.9 - 4.14)",
+      "accuracy": "100",
+      "line": "32762",
+      "osclass": [
+        {
+          "type": "phone",
+          "vendor": "Google",
+          "osfamily": "Android",
+          "osgen": "10.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:google:android:10"
+          ]
+        },
+        {
+          "type": "phone",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Android 4.1 - 6.0 (Linux 3.4 - 3.14)",
+      "accuracy": "100",
+      "line": "33623",
+      "osclass": [
+        {
+          "type": "phone",
+          "vendor": "Google",
+          "osfamily": "Android",
+          "osgen": "4.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:google:android:4"
+          ]
+        },
+        {
+          "type": "phone",
+          "vendor": "Google",
+          "osfamily": "Android",
+          "osgen": "5.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:google:android:5"
+          ]
+        },
+        {
+          "type": "phone",
+          "vendor": "Google",
+          "osfamily": "Android",
+          "osgen": "6.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:google:android:6"
+          ]
+        },
+        {
+          "type": "phone",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-10 17:28:48,646 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:48,646 - INFO - Testing SSH access for 192.168.0.101
+2025-01-10 17:28:48,646 - INFO - Testing SSH access to 192.168.0.101:22
+2025-01-10 17:28:48,656 - INFO - SSH test result for 192.168.0.101:22 = False
+2025-01-10 17:28:48,656 - INFO - SSH accessible: False
+2025-01-10 17:28:48,656 - INFO - Device not accessible via SSH
+2025-01-10 17:28:48,656 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:28:48,656 - INFO - Completed device profiling for 192.168.0.101
+2025-01-10 17:28:48,656 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_101.json
+2025-01-10 17:28:48,657 - INFO - Profile saved successfully
+2025-01-10 17:28:48,657 - INFO - Profile saved for 192.168.0.101
+2025-01-10 17:28:48,657 - INFO - 
+Profiling device: 192.168.0.141
+2025-01-10 17:28:48,657 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.141
+==================================================
+2025-01-10 17:28:48,657 - INFO - Getting basic info for 192.168.0.141
+2025-01-10 17:28:48,665 - INFO - Hostname resolved: 141.0.168.192.in-addr.arpa
+2025-01-10 17:28:48,665 - INFO - Testing host accessibility for 192.168.0.141
+2025-01-10 17:28:48,671 - INFO - Host 192.168.0.141 is responding to ping
+2025-01-10 17:28:48,671 - INFO - Getting MAC address for 192.168.0.141
+2025-01-10 17:28:48,678 - DEBUG - ARP output: ? (192.168.0.141) at 3c:6:30:16:6e:7d on en0 ifscope permanent [ethernet]
+
+2025-01-10 17:28:48,678 - INFO - MAC address found: 3c:6:30:16:6e:7d
+2025-01-10 17:28:48,678 - INFO - Looking up vendor for MAC: 3c:6:30:16:6e:7d
+2025-01-10 17:28:49,050 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:28:49,050 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-10 17:28:49,051 - INFO - Running nmap OS detection for 192.168.0.141
+2025-01-10 17:29:24,260 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "MacBook-Pro",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.141"
+  },
+  "vendor": {},
+  "status": {
+    "state": "up",
+    "reason": "localhost-response"
+  },
+  "uptime": {
+    "seconds": "10",
+    "lastboot": "Fri Jan 10 17:29:14 2025"
+  },
+  "tcp": {
+    "22": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "ssh",
+      "product": "OpenSSH",
+      "version": "9.4",
+      "extrainfo": "protocol 2.0",
+      "conf": "10",
+      "cpe": "cpe:/a:openbsd:openssh:9.4",
+      "script": {
+        "ssh-hostkey": "\n  256 db:fd:3d:cc:3e:8d:07:d2:0c:df:48:0f:b3:0d:95:e9 (ECDSA)\n  256 05:ef:c7:88:0f:9e:d8:39:63:97:c8:d5:25:00:a3:34 (ED25519)"
+      }
+    },
+    "88": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "kerberos-sec",
+      "product": "Heimdal Kerberos",
+      "version": "",
+      "extrainfo": "server time: 2025-01-11 00:28:56Z",
+      "conf": "10",
+      "cpe": "cpe:/a:heimdal:kerberos"
+    },
+    "445": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "microsoft-ds",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "3031": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "eppc",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "fingerprint-strings": "\n  X11Probe: \n    PPCT"
+      }
+    },
+    "3283": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "netassistant",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "5000": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "rtsp",
+      "product": "AirTunes rtspd",
+      "version": "755.1.1",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:apple:airtunes:755.1.1",
+      "script": {
+        "rtsp-methods": "ERROR: Script execution failed (use -d to debug)"
+      }
+    },
+    "5900": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "vnc",
+      "product": "Apple remote desktop vnc",
+      "version": "",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/o:apple:mac_os_x",
+      "script": {
+        "vnc-info": "\n  Protocol version: 3.889\n  Security types: \n    Apple Remote Desktop (30)\n    Unknown security type (33)\n    Unknown security type (36)\n    Mac OS X security type (35)"
+      }
+    },
+    "6881": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "tcpwrapped",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "8",
+      "cpe": ""
+    },
+    "7000": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "rtsp",
+      "product": "AirTunes rtspd",
+      "version": "755.1.1",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:apple:airtunes:755.1.1",
+      "script": {
+        "irc-info": "Unable to open connection",
+        "rtsp-methods": "ERROR: Script execution failed (use -d to debug)"
+      }
+    },
+    "8080": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "http",
+      "product": "nginx",
+      "version": "1.27.0",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:igor_sysoev:nginx:1.27.0",
+      "script": {
+        "http-title": "404 Not Found"
+      }
+    },
+    "49163": {
+      "state": "filtered",
+      "reason": "no-response",
+      "name": "",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "",
+      "cpe": ""
+    }
+  },
+  "hostscript": [
+    {
+      "id": "clock-skew",
+      "output": "-29s"
+    },
+    {
+      "id": "smb2-security-mode",
+      "output": "\n  3:0:2: \n    Message signing enabled and required"
+    },
+    {
+      "id": "smb2-time",
+      "output": "\n  date: 2025-01-11T00:28:50\n  start_date: N/A"
+    }
+  ],
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "22"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    },
+    {
+      "state": "closed",
+      "proto": "udp",
+      "portid": "43230"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Apple macOS 12 (Monterey) (Darwin 21.1.0 - 21.6.0)",
+      "accuracy": "100",
+      "line": "8004",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Apple",
+          "osfamily": "macOS",
+          "osgen": "12.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:apple:mac_os_x:12"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-10 17:29:24,261 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:29:24,261 - INFO - Testing SSH access for 192.168.0.141
+2025-01-10 17:29:24,261 - INFO - Testing SSH access to 192.168.0.141:22
+2025-01-10 17:29:24,293 - INFO - SSH banner: SSH-2.0-OpenSSH_9.4
+
+2025-01-10 17:29:24,293 - INFO - SSH accessible: True
+2025-01-10 17:29:24,293 - INFO - Attempting macOS info gathering...
+2025-01-10 17:29:24,293 - INFO - Attempting to gather macOS info for 192.168.0.141
+2025-01-10 17:29:24,293 - INFO - Attempting SSH connection to 192.168.0.141 with username collin
+2025-01-10 17:29:24,313 - DEBUG - starting thread (client mode): 0xbe76510
+2025-01-10 17:29:24,313 - DEBUG - Local version/idstring: SSH-2.0-paramiko_3.5.0
+2025-01-10 17:29:24,342 - DEBUG - Remote version/idstring: SSH-2.0-OpenSSH_9.4
+2025-01-10 17:29:24,342 - INFO - Connected (version 2.0, client OpenSSH_9.4)
+2025-01-10 17:29:24,345 - DEBUG - === Key exchange possibilities ===
+2025-01-10 17:29:24,345 - DEBUG - kex algos: sntrup761x25519-sha512@openssh.com, curve25519-sha256, curve25519-sha256@libssh.org, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, diffie-hellman-group-exchange-sha256, diffie-hellman-group16-sha512, diffie-hellman-group18-sha512, diffie-hellman-group14-sha256
+2025-01-10 17:29:24,345 - DEBUG - server key: rsa-sha2-512, rsa-sha2-256, ecdsa-sha2-nistp256, ssh-ed25519
+2025-01-10 17:29:24,345 - DEBUG - client encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-01-10 17:29:24,345 - DEBUG - server encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-01-10 17:29:24,345 - DEBUG - client mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-01-10 17:29:24,345 - DEBUG - server mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-01-10 17:29:24,345 - DEBUG - client compress: none, zlib@openssh.com
+2025-01-10 17:29:24,345 - DEBUG - server compress: none, zlib@openssh.com
+2025-01-10 17:29:24,345 - DEBUG - client lang: <none>
+2025-01-10 17:29:24,345 - DEBUG - server lang: <none>
+2025-01-10 17:29:24,345 - DEBUG - kex follows: False
+2025-01-10 17:29:24,345 - DEBUG - === Key exchange agreements ===
+2025-01-10 17:29:24,345 - DEBUG - Kex: curve25519-sha256@libssh.org
+2025-01-10 17:29:24,345 - DEBUG - HostKey: ssh-ed25519
+2025-01-10 17:29:24,345 - DEBUG - Cipher: aes128-ctr
+2025-01-10 17:29:24,345 - DEBUG - MAC: hmac-sha2-256
+2025-01-10 17:29:24,345 - DEBUG - Compression: none
+2025-01-10 17:29:24,345 - DEBUG - === End of kex handshake ===
+2025-01-10 17:29:24,358 - DEBUG - kex engine KexCurve25519 specified hash_algo <built-in function openssl_sha256>
+2025-01-10 17:29:24,360 - DEBUG - Switch to new keys ...
+2025-01-10 17:29:24,360 - DEBUG - Adding ssh-ed25519 host key for 192.168.0.141: b'05efc7880f9ed8396397c8d52500a334'
+2025-01-10 17:29:24,360 - DEBUG - Got EXT_INFO: {'server-sig-algs': b'ssh-ed25519,sk-ssh-ed25519@openssh.com,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,webauthn-sk-ecdsa-sha2-nistp256@openssh.com,ssh-dss,ssh-rsa,rsa-sha2-256,rsa-sha2-512', 'publickey-hostbound@openssh.com': b'0'}
+2025-01-10 17:29:24,387 - DEBUG - userauth is OK
+2025-01-10 17:29:24,657 - INFO - Authentication (password) successful!
+2025-01-10 17:29:24,658 - INFO - SSH connection successful
+2025-01-10 17:29:24,658 - DEBUG - [chan 0] Max packet in: 32768 bytes
+2025-01-10 17:29:24,677 - DEBUG - Received global request "hostkeys-00@openssh.com"
+2025-01-10 17:29:24,678 - DEBUG - Rejecting "hostkeys-00@openssh.com" global request from server.
+2025-01-10 17:29:24,678 - DEBUG - [chan 0] Max packet out: 32768 bytes
+2025-01-10 17:29:24,678 - DEBUG - Secsh channel 0 opened.
+2025-01-10 17:29:24,679 - DEBUG - [chan 0] Sesch channel 0 request ok
+2025-01-10 17:29:24,685 - DEBUG - [chan 1] Max packet in: 32768 bytes
+2025-01-10 17:29:24,685 - DEBUG - [chan 0] EOF received (0)
+2025-01-10 17:29:24,685 - DEBUG - [chan 0] EOF sent (0)
+2025-01-10 17:29:24,686 - DEBUG - [chan 1] Max packet out: 32768 bytes
+2025-01-10 17:29:24,686 - DEBUG - Secsh channel 1 opened.
+2025-01-10 17:29:24,686 - DEBUG - [chan 1] Sesch channel 1 request ok
+2025-01-10 17:29:24,699 - DEBUG - [chan 1] EOF received (1)
+2025-01-10 17:29:24,699 - DEBUG - [chan 2] Max packet in: 32768 bytes
+2025-01-10 17:29:24,699 - DEBUG - [chan 1] EOF sent (1)
+2025-01-10 17:29:24,699 - DEBUG - [chan 2] Max packet out: 32768 bytes
+2025-01-10 17:29:24,699 - DEBUG - Secsh channel 2 opened.
+2025-01-10 17:29:24,700 - DEBUG - [chan 2] Sesch channel 2 request ok
+2025-01-10 17:29:24,704 - INFO - System info gathered: hostname=MacBook-Pro, sw_vers=ProductName:		macOS
+ProductVersion:		14.3
+BuildVersion:		23D5033f
+, who=collin           console      Dec 12 13:33
+2025-01-10 17:29:24,705 - DEBUG - [chan 2] EOF received (2)
+2025-01-10 17:29:24,705 - DEBUG - [chan 3] Max packet in: 32768 bytes
+2025-01-10 17:29:24,705 - DEBUG - [chan 2] EOF sent (2)
+2025-01-10 17:29:24,706 - DEBUG - [chan 3] Max packet out: 32768 bytes
+2025-01-10 17:29:24,706 - DEBUG - Secsh channel 3 opened.
+2025-01-10 17:29:24,707 - DEBUG - [chan 3] Sesch channel 3 request ok
+2025-01-10 17:29:24,714 - DEBUG - [chan 3] EOF received (3)
+2025-01-10 17:29:24,714 - INFO - Found 201 services
+2025-01-10 17:29:24,715 - DEBUG - [chan 4] Max packet in: 32768 bytes
+2025-01-10 17:29:24,715 - DEBUG - [chan 3] EOF sent (3)
+2025-01-10 17:29:24,715 - DEBUG - [chan 4] Max packet out: 32768 bytes
+2025-01-10 17:29:24,715 - DEBUG - Secsh channel 4 opened.
+2025-01-10 17:29:24,715 - DEBUG - [chan 4] Sesch channel 4 request ok
+2025-01-10 17:29:24,726 - DEBUG - [chan 4] EOF received (4)
+2025-01-10 17:29:24,727 - INFO - Found 0 shares
+2025-01-10 17:29:24,727 - DEBUG - [chan 5] Max packet in: 32768 bytes
+2025-01-10 17:29:24,727 - DEBUG - [chan 4] EOF sent (4)
+2025-01-10 17:29:24,727 - DEBUG - [chan 5] Max packet out: 32768 bytes
+2025-01-10 17:29:24,727 - DEBUG - Secsh channel 5 opened.
+2025-01-10 17:29:24,728 - DEBUG - [chan 5] Sesch channel 5 request ok
+2025-01-10 17:29:24,733 - DEBUG - [chan 5] EOF received (5)
+2025-01-10 17:29:24,734 - INFO - Network interface information gathered
+2025-01-10 17:29:24,734 - DEBUG - EOF in transport thread
+2025-01-10 17:29:24,734 - INFO - Successfully gathered all macOS info
+2025-01-10 17:29:24,734 - DEBUG - [chan 5] EOF sent (5)
+2025-01-10 17:29:24,734 - DEBUG - Dropping user packet because connection is dead.
+2025-01-10 17:29:24,734 - INFO - Successfully gathered macOS info
+2025-01-10 17:29:24,734 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:29:24,734 - INFO - Completed device profiling for 192.168.0.141
+2025-01-10 17:29:24,734 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_141.json
+2025-01-10 17:29:24,735 - INFO - Profile saved successfully
+2025-01-10 17:29:24,735 - INFO - Profile saved for 192.168.0.141
+2025-01-10 17:29:24,735 - INFO - 
+Profiling device: 192.168.0.250
+2025-01-10 17:29:24,735 - INFO - 
+==================================================
+Starting device profiling for 192.168.0.250
+==================================================
+2025-01-10 17:29:24,735 - INFO - Getting basic info for 192.168.0.250
+2025-01-10 17:29:24,743 - INFO - Hostname resolved: 250.0.168.192.in-addr.arpa
+2025-01-10 17:29:24,743 - INFO - Testing host accessibility for 192.168.0.250
+2025-01-10 17:29:24,754 - INFO - Host 192.168.0.250 is responding to ping
+2025-01-10 17:29:24,755 - INFO - Getting MAC address for 192.168.0.250
+2025-01-10 17:29:24,758 - DEBUG - ARP output: ? (192.168.0.250) at cc:f4:11:99:21:45 on en0 ifscope [ethernet]
+
+2025-01-10 17:29:24,758 - INFO - MAC address found: cc:f4:11:99:21:45
+2025-01-10 17:29:24,758 - INFO - Looking up vendor for MAC: cc:f4:11:99:21:45
+2025-01-10 17:29:25,087 - INFO - Vendor found: Google, Inc.
+2025-01-10 17:29:25,087 - INFO - Vendor found: Google, Inc.
+2025-01-10 17:29:25,087 - INFO - Running nmap OS detection for 192.168.0.250
+2025-01-10 17:30:03,604 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "Google-Nest-Mini",
+      "type": "PTR"
+    }
+  ],
+  "addresses": {
+    "ipv4": "192.168.0.250",
+    "mac": "CC:F4:11:99:21:45"
+  },
+  "vendor": {
+    "CC:F4:11:99:21:45": "Google"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "uptime": {
+    "seconds": "3619077",
+    "lastboot": "Fri Nov 29 20:12:06 2024"
+  },
+  "tcp": {
+    "8008": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "http",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "http-title": "Site doesn't have a title."
+      }
+    },
+    "8009": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "ajp13",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "ssl-date": "TLS randomness does not represent time",
+        "ajp-methods": "Failed to get a valid response for the OPTION request",
+        "ssl-cert": "Subject: commonName=a1e44969-5ec8-9476-39a6-d28d6632d58e\nNot valid before: 2025-01-09T21:12:21\nNot valid after:  2025-01-11T21:12:21"
+      }
+    },
+    "8443": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "https-alt",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "ssl-cert": "Subject: commonName=AP43HK2 FA8FCA308C9E/organizationName=Google Inc/stateOrProvinceName=California/countryName=US\nNot valid before: 2019-03-05T08:00:00\nNot valid after:  2039-11-10T21:50:12",
+        "http-title": "Site doesn't have a title."
+      }
+    },
+    "9000": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "cslistener",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "10001": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "scp-config",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "8008"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    },
+    {
+      "state": "closed",
+      "proto": "udp",
+      "portid": "39912"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Linux 3.2 - 4.14",
+      "accuracy": "100",
+      "line": "68432",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3"
+          ]
+        },
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "4.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:4"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-10 17:30:03,605 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:30:03,605 - INFO - Testing SSH access for 192.168.0.250
+2025-01-10 17:30:03,605 - INFO - Testing SSH access to 192.168.0.250:22
+2025-01-10 17:30:03,613 - INFO - SSH test result for 192.168.0.250:22 = False
+2025-01-10 17:30:03,613 - INFO - SSH accessible: False
+2025-01-10 17:30:03,613 - INFO - Device not accessible via SSH
+2025-01-10 17:30:03,613 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-10 17:30:03,613 - INFO - Completed device profiling for 192.168.0.250
+2025-01-10 17:30:03,613 - INFO - Saving profile to /Users/collin/netscan/logs/192_168_0_250.json
+2025-01-10 17:30:03,613 - INFO - Profile saved successfully
+2025-01-10 17:30:03,613 - INFO - Profile saved for 192.168.0.250
+2025-01-15 14:32:18,129 - INFO - Starting enhanced network scanner...
+2025-01-15 14:32:18,129 - INFO - Arguments: Namespace(monitor=False, refresh=300, log_path='/Users/collin/netscan/logs', username='collin', password='nano', ssh_port=22, winrm_port=5985, debug=True)
+2025-01-15 14:32:18,162 - INFO - Initialized NetworkScanner with log_path=/Users/collin/netscan/logs, ssh_port=22
+2025-01-15 14:32:18,162 - INFO - Available interfaces: ['lo0', 'gif0', 'stf0', 'anpi1', 'anpi0', 'en3', 'en4', 'en1', 'en2', 'bridge0', 'ap1', 'en0', 'awdl0', 'llw0', 'utun0', 'utun1', 'utun2', 'utun3', 'utun4', 'utun5']
+2025-01-15 14:32:18,162 - INFO - Selected interface en0: IP=172.20.21.161, Netmask=255.255.255.0
+2025-01-15 14:32:18,162 - INFO - Network range result: {'Base': '172.20.21.0', 'Prefix': 24, 'Interface': '172.20.21.161'}
+2025-01-15 14:32:18,162 - INFO - Network range determined: {'Base': '172.20.21.0', 'Prefix': 24, 'Interface': '172.20.21.161'}
+2025-01-15 14:32:18,162 - INFO - Starting network scan on 172.20.21.161/24
+2025-01-15 14:32:18,162 - INFO - Running arp -a to find devices
+2025-01-15 14:32:18,370 - INFO - ARP output: ? (172.20.21.1) at c8:4f:86:a1:fa:b0 on en0 ifscope [ethernet]
+? (172.20.21.6) at 78:45:58:f1:35:fb on en0 ifscope [ethernet]
+? (172.20.21.146) at 8e:ad:ea:d0:25:cf on en0 ifscope [ethernet]
+? (172.20.21.148) at fa:dc:5d:d5:bf:d0 on en0 ifscope [ethernet]
+? (172.20.21.255) at ff:ff:ff:ff:ff:ff on en0 ifscope [ethernet]
+mdns.mcast.net (224.0.0.251) at 1:0:5e:0:0:fb on en0 ifscope permanent [ethernet]
+
+2025-01-15 14:32:18,371 - INFO - Found device in ARP: 172.20.21.1
+2025-01-15 14:32:18,371 - INFO - Found device in ARP: 172.20.21.6
+2025-01-15 14:32:18,371 - INFO - Found device in ARP: 172.20.21.146
+2025-01-15 14:32:18,371 - INFO - Found device in ARP: 172.20.21.148
+2025-01-15 14:32:18,371 - INFO - Found device in ARP: 172.20.21.255
+2025-01-15 14:32:18,371 - INFO - Starting ping sweep
+2025-01-15 14:32:19,398 - INFO - Found active host: 172.20.21.1 (hostname: 172.20.21.1)
+2025-01-15 14:32:24,477 - INFO - Found active host: 172.20.21.6 (hostname: 172.20.21.6)
+2025-01-15 14:34:46,753 - INFO - Found active host: 172.20.21.146 (hostname: 172.20.21.146)
+2025-01-15 14:34:48,812 - INFO - Found active host: 172.20.21.148 (hostname: 172.20.21.148)
+2025-01-15 14:35:01,348 - INFO - Found active host: 172.20.21.161 (hostname: 172.20.21.161)
+2025-01-15 14:36:35,536 - INFO - Running detailed nmap scan on 172.20.21.1
+2025-01-15 14:36:35,693 - INFO - Nmap confirmed 172.20.21.1 is active
+2025-01-15 14:36:35,694 - INFO - Running detailed nmap scan on 172.20.21.6
+2025-01-15 14:36:35,782 - INFO - Nmap confirmed 172.20.21.6 is active
+2025-01-15 14:36:35,782 - INFO - Running detailed nmap scan on 172.20.21.146
+2025-01-15 14:36:36,241 - INFO - Nmap confirmed 172.20.21.146 is active
+2025-01-15 14:36:36,242 - INFO - Running detailed nmap scan on 172.20.21.148
+2025-01-15 14:36:36,325 - INFO - Nmap confirmed 172.20.21.148 is active
+2025-01-15 14:36:36,325 - INFO - Running detailed nmap scan on 172.20.21.161
+2025-01-15 14:36:36,362 - INFO - Nmap confirmed 172.20.21.161 is active
+2025-01-15 14:36:36,362 - INFO - Found 5 active devices
+2025-01-15 14:36:36,362 - INFO - 
+Profiling device: 172.20.21.1
+2025-01-15 14:36:36,362 - INFO - 
+==================================================
+Starting device profiling for 172.20.21.1
+==================================================
+2025-01-15 14:36:36,362 - INFO - Getting basic info for 172.20.21.1
+2025-01-15 14:36:36,386 - INFO - Hostname resolved: 172.20.21.1
+2025-01-15 14:36:36,386 - INFO - Testing host accessibility for 172.20.21.1
+2025-01-15 14:36:37,396 - WARNING - Host 172.20.21.1 is not responding to ping
+2025-01-15 14:36:37,397 - WARNING - Host 172.20.21.1 is not responding to basic connectivity tests
+2025-01-15 14:36:37,397 - INFO - Getting MAC address for 172.20.21.1
+2025-01-15 14:36:37,405 - DEBUG - ARP output: ? (172.20.21.1) at c8:4f:86:a1:fa:b0 on en0 ifscope [ethernet]
+
+2025-01-15 14:36:37,405 - INFO - MAC address found: c8:4f:86:a1:fa:b0
+2025-01-15 14:36:37,405 - INFO - Looking up vendor for MAC: c8:4f:86:a1:fa:b0
+2025-01-15 14:36:38,044 - INFO - Vendor found: Sophos Ltd
+2025-01-15 14:36:38,044 - INFO - Vendor found: Sophos Ltd
+2025-01-15 14:36:38,044 - INFO - Running nmap OS detection for 172.20.21.1
+2025-01-15 14:37:02,403 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "addresses": {
+    "ipv4": "172.20.21.1",
+    "mac": "C8:4F:86:A1:FA:B0"
+  },
+  "vendor": {
+    "C8:4F:86:A1:FA:B0": "Sophos"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "tcp": {
+    "53": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "domain",
+      "product": "dnsmasq",
+      "version": "2.90",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:thekelleys:dnsmasq:2.90",
+      "script": {
+        "dns-nsid": "\n  bind.version: dnsmasq-2.90"
+      }
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "53"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "OpenWrt Kamikaze 7.09 (Linux 2.6.22)",
+      "accuracy": "88",
+      "line": "64793",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.6.X",
+          "accuracy": "88",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.6.22"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt (Linux 3.3)",
+      "accuracy": "87",
+      "line": "65280",
+      "osclass": [
+        {
+          "type": "broadband router",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.3"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt 0.9 - 7.09 (Linux 2.4.30 - 2.4.34)",
+      "accuracy": "87",
+      "line": "50110",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt White Russian 0.9 (Linux 2.4.30)",
+      "accuracy": "87",
+      "line": "50149",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4.30"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Netgear GS108Tv3, GS110Tv3, or GS308T switch (Linux 3.18.24)",
+      "accuracy": "85",
+      "line": "94233",
+      "osclass": [
+        {
+          "type": "switch",
+          "vendor": "Netgear",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": []
+        },
+        {
+          "type": "switch",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.18.24"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt Chaos Calmer (Linux 3.18)",
+      "accuracy": "85",
+      "line": "69480",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.18"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 2.4.18",
+      "accuracy": "85",
+      "line": "48450",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4.18"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philips Hue Bridge 2.0 (Linux 4.14)",
+      "accuracy": "85",
+      "line": "99723",
+      "osclass": [
+        {
+          "type": "specialized",
+          "vendor": "Philips",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": []
+        },
+        {
+          "type": "specialized",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philips Hue Bridge 2.0 (Linux)",
+      "accuracy": "85",
+      "line": "99742",
+      "osclass": [
+        {
+          "type": "specialized",
+          "vendor": "Philips",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": []
+        },
+        {
+          "type": "specialized",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-15 14:37:02,404 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:37:02,404 - INFO - Testing SSH access for 172.20.21.1
+2025-01-15 14:37:02,404 - INFO - Testing SSH access to 172.20.21.1:22
+2025-01-15 14:37:04,406 - INFO - SSH test result for 172.20.21.1:22 = False
+2025-01-15 14:37:04,407 - INFO - SSH accessible: False
+2025-01-15 14:37:04,407 - INFO - Device not accessible via SSH
+2025-01-15 14:37:04,407 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:37:04,407 - INFO - Completed device profiling for 172.20.21.1
+2025-01-15 14:37:04,408 - INFO - Saving profile to /Users/collin/netscan/logs/172_20_21_1.json
+2025-01-15 14:37:04,409 - INFO - Profile saved successfully
+2025-01-15 14:37:04,409 - INFO - Profile saved for 172.20.21.1
+2025-01-15 14:37:04,409 - INFO - 
+Profiling device: 172.20.21.6
+2025-01-15 14:37:04,409 - INFO - 
+==================================================
+Starting device profiling for 172.20.21.6
+==================================================
+2025-01-15 14:37:04,410 - INFO - Getting basic info for 172.20.21.6
+2025-01-15 14:37:04,511 - INFO - Hostname resolved: 172.20.21.6
+2025-01-15 14:37:04,511 - INFO - Testing host accessibility for 172.20.21.6
+2025-01-15 14:37:05,527 - WARNING - Host 172.20.21.6 is not responding to ping
+2025-01-15 14:37:05,527 - WARNING - Host 172.20.21.6 is not responding to basic connectivity tests
+2025-01-15 14:37:05,527 - INFO - Getting MAC address for 172.20.21.6
+2025-01-15 14:37:05,538 - DEBUG - ARP output: ? (172.20.21.6) at 78:45:58:f1:35:fb on en0 ifscope [ethernet]
+
+2025-01-15 14:37:05,538 - INFO - MAC address found: 78:45:58:f1:35:fb
+2025-01-15 14:37:05,538 - INFO - Looking up vendor for MAC: 78:45:58:f1:35:fb
+2025-01-15 14:37:06,051 - INFO - Vendor found: Ubiquiti Inc
+2025-01-15 14:37:06,052 - INFO - Vendor found: Ubiquiti Inc
+2025-01-15 14:37:06,052 - INFO - Running nmap OS detection for 172.20.21.6
+2025-01-15 14:37:31,184 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "addresses": {
+    "ipv4": "172.20.21.6",
+    "mac": "78:45:58:F1:35:FB"
+  },
+  "vendor": {
+    "78:45:58:F1:35:FB": "Ubiquiti"
+  },
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "tcp": {
+    "53": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "domain",
+      "product": "dnsmasq",
+      "version": "2.90",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:thekelleys:dnsmasq:2.90",
+      "script": {
+        "dns-nsid": "\n  bind.version: dnsmasq-2.90"
+      }
+    }
+  },
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "53"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "OpenWrt Kamikaze 7.09 (Linux 2.6.22)",
+      "accuracy": "88",
+      "line": "64793",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.6.X",
+          "accuracy": "88",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.6.22"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Netgear GS108Tv3, GS110Tv3, or GS308T switch (Linux 3.18.24)",
+      "accuracy": "87",
+      "line": "94233",
+      "osclass": [
+        {
+          "type": "switch",
+          "vendor": "Netgear",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "87",
+          "cpe": []
+        },
+        {
+          "type": "switch",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.18.24"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt (Linux 3.3)",
+      "accuracy": "87",
+      "line": "65280",
+      "osclass": [
+        {
+          "type": "broadband router",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.3"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt 0.9 - 7.09 (Linux 2.4.30 - 2.4.34)",
+      "accuracy": "87",
+      "line": "50110",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt White Russian 0.9 (Linux 2.4.30)",
+      "accuracy": "87",
+      "line": "50149",
+      "osclass": [
+        {
+          "type": "WAP",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "87",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4.30"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philips Hue Bridge 2.0 (Linux)",
+      "accuracy": "86",
+      "line": "99742",
+      "osclass": [
+        {
+          "type": "specialized",
+          "vendor": "Philips",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "86",
+          "cpe": []
+        },
+        {
+          "type": "specialized",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": null,
+          "accuracy": "86",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenWrt Chaos Calmer (Linux 3.18)",
+      "accuracy": "85",
+      "line": "69480",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "3.X",
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:3.18"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Linux 2.4.18",
+      "accuracy": "85",
+      "line": "48450",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": "2.4.X",
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel:2.4.18"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philips Hue Bridge 2.0 (Linux 4.14)",
+      "accuracy": "85",
+      "line": "99723",
+      "osclass": [
+        {
+          "type": "specialized",
+          "vendor": "Philips",
+          "osfamily": "embedded",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": []
+        },
+        {
+          "type": "specialized",
+          "vendor": "Linux",
+          "osfamily": "Linux",
+          "osgen": null,
+          "accuracy": "85",
+          "cpe": [
+            "cpe:/o:linux:linux_kernel"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-15 14:37:31,186 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:37:31,186 - INFO - Testing SSH access for 172.20.21.6
+2025-01-15 14:37:31,186 - INFO - Testing SSH access to 172.20.21.6:22
+2025-01-15 14:37:33,188 - INFO - SSH test result for 172.20.21.6:22 = False
+2025-01-15 14:37:33,188 - INFO - SSH accessible: False
+2025-01-15 14:37:33,188 - INFO - Device not accessible via SSH
+2025-01-15 14:37:33,188 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:37:33,189 - INFO - Completed device profiling for 172.20.21.6
+2025-01-15 14:37:33,189 - INFO - Saving profile to /Users/collin/netscan/logs/172_20_21_6.json
+2025-01-15 14:37:33,190 - INFO - Profile saved successfully
+2025-01-15 14:37:33,190 - INFO - Profile saved for 172.20.21.6
+2025-01-15 14:37:33,191 - INFO - 
+Profiling device: 172.20.21.146
+2025-01-15 14:37:33,191 - INFO - 
+==================================================
+Starting device profiling for 172.20.21.146
+==================================================
+2025-01-15 14:37:33,191 - INFO - Getting basic info for 172.20.21.146
+2025-01-15 14:37:33,334 - INFO - Hostname resolved: 172.20.21.146
+2025-01-15 14:37:33,334 - INFO - Testing host accessibility for 172.20.21.146
+2025-01-15 14:37:34,346 - WARNING - Host 172.20.21.146 is not responding to ping
+2025-01-15 14:37:34,346 - WARNING - Host 172.20.21.146 is not responding to basic connectivity tests
+2025-01-15 14:37:34,346 - INFO - Getting MAC address for 172.20.21.146
+2025-01-15 14:37:34,351 - DEBUG - ARP output: ? (172.20.21.146) at 8e:ad:ea:d0:25:cf on en0 ifscope [ethernet]
+
+2025-01-15 14:37:34,351 - INFO - MAC address found: 8e:ad:ea:d0:25:cf
+2025-01-15 14:37:34,351 - INFO - Looking up vendor for MAC: 8e:ad:ea:d0:25:cf
+2025-01-15 14:37:34,892 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:37:34,893 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:37:34,893 - INFO - Running nmap OS detection for 172.20.21.146
+2025-01-15 14:38:05,675 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "addresses": {
+    "ipv4": "172.20.21.146",
+    "mac": "8E:AD:EA:D0:25:CF"
+  },
+  "vendor": {},
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "portused": [],
+  "osmatch": []
+}
+2025-01-15 14:38:05,676 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:38:05,677 - INFO - Testing SSH access for 172.20.21.146
+2025-01-15 14:38:05,677 - INFO - Testing SSH access to 172.20.21.146:22
+2025-01-15 14:38:07,678 - INFO - SSH test result for 172.20.21.146:22 = False
+2025-01-15 14:38:07,678 - INFO - SSH accessible: False
+2025-01-15 14:38:07,678 - INFO - Device not accessible via SSH
+2025-01-15 14:38:07,678 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:38:07,678 - INFO - Completed device profiling for 172.20.21.146
+2025-01-15 14:38:07,679 - INFO - Saving profile to /Users/collin/netscan/logs/172_20_21_146.json
+2025-01-15 14:38:07,679 - INFO - Profile saved successfully
+2025-01-15 14:38:07,679 - INFO - Profile saved for 172.20.21.146
+2025-01-15 14:38:07,680 - INFO - 
+Profiling device: 172.20.21.148
+2025-01-15 14:38:07,680 - INFO - 
+==================================================
+Starting device profiling for 172.20.21.148
+==================================================
+2025-01-15 14:38:07,680 - INFO - Getting basic info for 172.20.21.148
+2025-01-15 14:38:07,714 - INFO - Hostname resolved: 172.20.21.148
+2025-01-15 14:38:07,715 - INFO - Testing host accessibility for 172.20.21.148
+2025-01-15 14:38:08,738 - WARNING - Host 172.20.21.148 is not responding to ping
+2025-01-15 14:38:08,738 - WARNING - Host 172.20.21.148 is not responding to basic connectivity tests
+2025-01-15 14:38:08,738 - INFO - Getting MAC address for 172.20.21.148
+2025-01-15 14:38:08,747 - DEBUG - ARP output: ? (172.20.21.148) at fa:dc:5d:d5:bf:d0 on en0 ifscope [ethernet]
+
+2025-01-15 14:38:08,747 - INFO - MAC address found: fa:dc:5d:d5:bf:d0
+2025-01-15 14:38:08,747 - INFO - Looking up vendor for MAC: fa:dc:5d:d5:bf:d0
+2025-01-15 14:38:09,756 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:38:09,757 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:38:09,757 - INFO - Running nmap OS detection for 172.20.21.148
+2025-01-15 14:38:40,674 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "addresses": {
+    "ipv4": "172.20.21.148",
+    "mac": "FA:DC:5D:D5:BF:D0"
+  },
+  "vendor": {},
+  "status": {
+    "state": "up",
+    "reason": "arp-response"
+  },
+  "portused": [],
+  "osmatch": []
+}
+2025-01-15 14:38:40,675 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:38:40,675 - INFO - Testing SSH access for 172.20.21.148
+2025-01-15 14:38:40,675 - INFO - Testing SSH access to 172.20.21.148:22
+2025-01-15 14:38:42,677 - INFO - SSH test result for 172.20.21.148:22 = False
+2025-01-15 14:38:42,677 - INFO - SSH accessible: False
+2025-01-15 14:38:42,677 - INFO - Device not accessible via SSH
+2025-01-15 14:38:42,678 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:38:42,678 - INFO - Completed device profiling for 172.20.21.148
+2025-01-15 14:38:42,678 - INFO - Saving profile to /Users/collin/netscan/logs/172_20_21_148.json
+2025-01-15 14:38:42,680 - INFO - Profile saved successfully
+2025-01-15 14:38:42,680 - INFO - Profile saved for 172.20.21.148
+2025-01-15 14:38:42,680 - INFO - 
+Profiling device: 172.20.21.161
+2025-01-15 14:38:42,680 - INFO - 
+==================================================
+Starting device profiling for 172.20.21.161
+==================================================
+2025-01-15 14:38:42,680 - INFO - Getting basic info for 172.20.21.161
+2025-01-15 14:38:42,704 - INFO - Hostname resolved: 172.20.21.161
+2025-01-15 14:38:42,704 - INFO - Testing host accessibility for 172.20.21.161
+2025-01-15 14:38:42,710 - INFO - Host 172.20.21.161 is responding to ping
+2025-01-15 14:38:42,710 - INFO - Getting MAC address for 172.20.21.161
+2025-01-15 14:38:42,713 - DEBUG - ARP output: ? (172.20.21.161) at 3c:6:30:16:6e:7d on en0 ifscope permanent [ethernet]
+
+2025-01-15 14:38:42,714 - INFO - MAC address found: 3c:6:30:16:6e:7d
+2025-01-15 14:38:42,714 - INFO - Looking up vendor for MAC: 3c:6:30:16:6e:7d
+2025-01-15 14:38:43,048 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:38:43,049 - INFO - Vendor found: {"errors":{"detail":"Not Found"}}
+2025-01-15 14:38:43,049 - INFO - Running nmap OS detection for 172.20.21.161
+2025-01-15 14:39:18,377 - DEBUG - Nmap scan result: {
+  "hostnames": [
+    {
+      "name": "",
+      "type": ""
+    }
+  ],
+  "addresses": {
+    "ipv4": "172.20.21.161"
+  },
+  "vendor": {},
+  "status": {
+    "state": "up",
+    "reason": "localhost-response"
+  },
+  "uptime": {
+    "seconds": "10",
+    "lastboot": "Wed Jan 15 14:39:08 2025"
+  },
+  "tcp": {
+    "22": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "ssh",
+      "product": "OpenSSH",
+      "version": "9.4",
+      "extrainfo": "protocol 2.0",
+      "conf": "10",
+      "cpe": "cpe:/a:openbsd:openssh:9.4",
+      "script": {
+        "ssh-hostkey": "\n  256 db:fd:3d:cc:3e:8d:07:d2:0c:df:48:0f:b3:0d:95:e9 (ECDSA)\n  256 05:ef:c7:88:0f:9e:d8:39:63:97:c8:d5:25:00:a3:34 (ED25519)"
+      }
+    },
+    "88": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "kerberos-sec",
+      "product": "Heimdal Kerberos",
+      "version": "",
+      "extrainfo": "server time: 2025-01-15 21:38:50Z",
+      "conf": "10",
+      "cpe": "cpe:/a:heimdal:kerberos"
+    },
+    "445": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "microsoft-ds",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "3031": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "eppc",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": "",
+      "script": {
+        "fingerprint-strings": "\n  X11Probe: \n    PPCT"
+      }
+    },
+    "3283": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "netassistant",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "3",
+      "cpe": ""
+    },
+    "5000": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "rtsp",
+      "product": "AirTunes rtspd",
+      "version": "755.1.1",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:apple:airtunes:755.1.1",
+      "script": {
+        "rtsp-methods": "ERROR: Script execution failed (use -d to debug)"
+      }
+    },
+    "5900": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "vnc",
+      "product": "Apple remote desktop vnc",
+      "version": "",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/o:apple:mac_os_x",
+      "script": {
+        "vnc-info": "\n  Protocol version: 3.889\n  Security types: \n    Apple Remote Desktop (30)\n    Unknown security type (33)\n    Unknown security type (36)\n    Mac OS X security type (35)"
+      }
+    },
+    "6881": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "tcpwrapped",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "8",
+      "cpe": ""
+    },
+    "7000": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "rtsp",
+      "product": "AirTunes rtspd",
+      "version": "755.1.1",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:apple:airtunes:755.1.1",
+      "script": {
+        "irc-info": "Unable to open connection",
+        "rtsp-methods": "ERROR: Script execution failed (use -d to debug)"
+      }
+    },
+    "8080": {
+      "state": "open",
+      "reason": "syn-ack",
+      "name": "http",
+      "product": "nginx",
+      "version": "1.27.0",
+      "extrainfo": "",
+      "conf": "10",
+      "cpe": "cpe:/a:igor_sysoev:nginx:1.27.0",
+      "script": {
+        "http-title": "404 Not Found"
+      }
+    },
+    "49163": {
+      "state": "filtered",
+      "reason": "no-response",
+      "name": "",
+      "product": "",
+      "version": "",
+      "extrainfo": "",
+      "conf": "",
+      "cpe": ""
+    }
+  },
+  "hostscript": [
+    {
+      "id": "smb2-time",
+      "output": "\n  date: 2025-01-15T21:38:44\n  start_date: N/A"
+    },
+    {
+      "id": "smb2-security-mode",
+      "output": "\n  3:0:2: \n    Message signing enabled and required"
+    },
+    {
+      "id": "clock-skew",
+      "output": "-27s"
+    }
+  ],
+  "portused": [
+    {
+      "state": "open",
+      "proto": "tcp",
+      "portid": "22"
+    },
+    {
+      "state": "closed",
+      "proto": "tcp",
+      "portid": "1"
+    },
+    {
+      "state": "closed",
+      "proto": "udp",
+      "portid": "44722"
+    }
+  ],
+  "osmatch": [
+    {
+      "name": "Apple macOS 12 (Monterey) (Darwin 21.1.0 - 21.6.0)",
+      "accuracy": "100",
+      "line": "8004",
+      "osclass": [
+        {
+          "type": "general purpose",
+          "vendor": "Apple",
+          "osfamily": "macOS",
+          "osgen": "12.X",
+          "accuracy": "100",
+          "cpe": [
+            "cpe:/o:apple:mac_os_x:12"
+          ]
+        }
+      ]
+    }
+  ]
+}
+2025-01-15 14:39:18,378 - ERROR - Nmap OS detection failed: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:39:18,378 - INFO - Testing SSH access for 172.20.21.161
+2025-01-15 14:39:18,378 - INFO - Testing SSH access to 172.20.21.161:22
+2025-01-15 14:39:18,411 - INFO - SSH banner: SSH-2.0-OpenSSH_9.4
+
+2025-01-15 14:39:18,411 - INFO - SSH accessible: True
+2025-01-15 14:39:18,411 - INFO - Attempting macOS info gathering...
+2025-01-15 14:39:18,411 - INFO - Attempting to gather macOS info for 172.20.21.161
+2025-01-15 14:39:18,412 - INFO - Attempting SSH connection to 172.20.21.161 with username collin
+2025-01-15 14:39:18,431 - DEBUG - starting thread (client mode): 0xbeee510
+2025-01-15 14:39:18,431 - DEBUG - Local version/idstring: SSH-2.0-paramiko_3.5.0
+2025-01-15 14:39:18,460 - DEBUG - Remote version/idstring: SSH-2.0-OpenSSH_9.4
+2025-01-15 14:39:18,460 - INFO - Connected (version 2.0, client OpenSSH_9.4)
+2025-01-15 14:39:18,463 - DEBUG - === Key exchange possibilities ===
+2025-01-15 14:39:18,463 - DEBUG - kex algos: sntrup761x25519-sha512@openssh.com, curve25519-sha256, curve25519-sha256@libssh.org, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, diffie-hellman-group-exchange-sha256, diffie-hellman-group16-sha512, diffie-hellman-group18-sha512, diffie-hellman-group14-sha256
+2025-01-15 14:39:18,463 - DEBUG - server key: rsa-sha2-512, rsa-sha2-256, ecdsa-sha2-nistp256, ssh-ed25519
+2025-01-15 14:39:18,463 - DEBUG - client encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-01-15 14:39:18,463 - DEBUG - server encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-01-15 14:39:18,463 - DEBUG - client mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-01-15 14:39:18,463 - DEBUG - server mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-01-15 14:39:18,463 - DEBUG - client compress: none, zlib@openssh.com
+2025-01-15 14:39:18,463 - DEBUG - server compress: none, zlib@openssh.com
+2025-01-15 14:39:18,463 - DEBUG - client lang: <none>
+2025-01-15 14:39:18,463 - DEBUG - server lang: <none>
+2025-01-15 14:39:18,463 - DEBUG - kex follows: False
+2025-01-15 14:39:18,463 - DEBUG - === Key exchange agreements ===
+2025-01-15 14:39:18,463 - DEBUG - Kex: curve25519-sha256@libssh.org
+2025-01-15 14:39:18,463 - DEBUG - HostKey: ssh-ed25519
+2025-01-15 14:39:18,463 - DEBUG - Cipher: aes128-ctr
+2025-01-15 14:39:18,463 - DEBUG - MAC: hmac-sha2-256
+2025-01-15 14:39:18,463 - DEBUG - Compression: none
+2025-01-15 14:39:18,463 - DEBUG - === End of kex handshake ===
+2025-01-15 14:39:18,486 - DEBUG - kex engine KexCurve25519 specified hash_algo <built-in function openssl_sha256>
+2025-01-15 14:39:18,489 - DEBUG - Switch to new keys ...
+2025-01-15 14:39:18,489 - DEBUG - Adding ssh-ed25519 host key for 172.20.21.161: b'05efc7880f9ed8396397c8d52500a334'
+2025-01-15 14:39:18,489 - DEBUG - Got EXT_INFO: {'server-sig-algs': b'ssh-ed25519,sk-ssh-ed25519@openssh.com,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,webauthn-sk-ecdsa-sha2-nistp256@openssh.com,ssh-dss,ssh-rsa,rsa-sha2-256,rsa-sha2-512', 'publickey-hostbound@openssh.com': b'0'}
+2025-01-15 14:39:18,496 - DEBUG - userauth is OK
+2025-01-15 14:39:18,769 - INFO - Authentication (password) successful!
+2025-01-15 14:39:18,771 - INFO - SSH connection successful
+2025-01-15 14:39:18,772 - DEBUG - [chan 0] Max packet in: 32768 bytes
+2025-01-15 14:39:18,789 - DEBUG - Received global request "hostkeys-00@openssh.com"
+2025-01-15 14:39:18,789 - DEBUG - Rejecting "hostkeys-00@openssh.com" global request from server.
+2025-01-15 14:39:18,789 - DEBUG - [chan 0] Max packet out: 32768 bytes
+2025-01-15 14:39:18,790 - DEBUG - Secsh channel 0 opened.
+2025-01-15 14:39:18,790 - DEBUG - [chan 0] Sesch channel 0 request ok
+2025-01-15 14:39:18,797 - DEBUG - [chan 0] EOF received (0)
+2025-01-15 14:39:18,797 - DEBUG - [chan 1] Max packet in: 32768 bytes
+2025-01-15 14:39:18,798 - DEBUG - [chan 0] EOF sent (0)
+2025-01-15 14:39:18,798 - DEBUG - [chan 1] Max packet out: 32768 bytes
+2025-01-15 14:39:18,798 - DEBUG - Secsh channel 1 opened.
+2025-01-15 14:39:18,798 - DEBUG - [chan 1] Sesch channel 1 request ok
+2025-01-15 14:39:18,811 - DEBUG - [chan 1] EOF received (1)
+2025-01-15 14:39:18,811 - DEBUG - [chan 2] Max packet in: 32768 bytes
+2025-01-15 14:39:18,812 - DEBUG - [chan 1] EOF sent (1)
+2025-01-15 14:39:18,812 - DEBUG - [chan 2] Max packet out: 32768 bytes
+2025-01-15 14:39:18,812 - DEBUG - Secsh channel 2 opened.
+2025-01-15 14:39:18,812 - DEBUG - [chan 2] Sesch channel 2 request ok
+2025-01-15 14:39:18,817 - INFO - System info gathered: hostname=MacBook-Pro.local, sw_vers=ProductName:		macOS
+ProductVersion:		14.3
+BuildVersion:		23D5033f
+, who=collin           console      Dec 12 13:33
+2025-01-15 14:39:18,817 - DEBUG - [chan 3] Max packet in: 32768 bytes
+2025-01-15 14:39:18,817 - DEBUG - [chan 2] EOF received (2)
+2025-01-15 14:39:18,817 - DEBUG - [chan 2] EOF sent (2)
+2025-01-15 14:39:18,817 - DEBUG - [chan 3] Max packet out: 32768 bytes
+2025-01-15 14:39:18,817 - DEBUG - Secsh channel 3 opened.
+2025-01-15 14:39:18,818 - DEBUG - [chan 3] Sesch channel 3 request ok
+2025-01-15 14:39:18,825 - DEBUG - [chan 3] EOF received (3)
+2025-01-15 14:39:18,825 - INFO - Found 207 services
+2025-01-15 14:39:18,825 - DEBUG - [chan 4] Max packet in: 32768 bytes
+2025-01-15 14:39:18,826 - DEBUG - [chan 3] EOF sent (3)
+2025-01-15 14:39:18,826 - DEBUG - [chan 4] Max packet out: 32768 bytes
+2025-01-15 14:39:18,826 - DEBUG - Secsh channel 4 opened.
+2025-01-15 14:39:18,826 - DEBUG - [chan 4] Sesch channel 4 request ok
+2025-01-15 14:39:18,837 - DEBUG - [chan 4] EOF received (4)
+2025-01-15 14:39:18,837 - INFO - Found 0 shares
+2025-01-15 14:39:18,837 - DEBUG - [chan 5] Max packet in: 32768 bytes
+2025-01-15 14:39:18,838 - DEBUG - [chan 4] EOF sent (4)
+2025-01-15 14:39:18,838 - DEBUG - [chan 5] Max packet out: 32768 bytes
+2025-01-15 14:39:18,838 - DEBUG - Secsh channel 5 opened.
+2025-01-15 14:39:18,838 - DEBUG - [chan 5] Sesch channel 5 request ok
+2025-01-15 14:39:18,845 - DEBUG - [chan 5] EOF received (5)
+2025-01-15 14:39:18,845 - INFO - Network interface information gathered
+2025-01-15 14:39:18,846 - DEBUG - EOF in transport thread
+2025-01-15 14:39:18,846 - INFO - Successfully gathered all macOS info
+2025-01-15 14:39:18,846 - DEBUG - [chan 5] EOF sent (5)
+2025-01-15 14:39:18,846 - DEBUG - Dropping user packet because connection is dead.
+2025-01-15 14:39:18,846 - INFO - Successfully gathered macOS info
+2025-01-15 14:39:18,846 - ERROR - Failed to add service history: Wrong type for [host], should be a string [was <class 'int'>]
+2025-01-15 14:39:18,846 - INFO - Completed device profiling for 172.20.21.161
+2025-01-15 14:39:18,847 - INFO - Saving profile to /Users/collin/netscan/logs/172_20_21_161.json
+2025-01-15 14:39:18,849 - INFO - Profile saved successfully
+2025-01-15 14:39:18,849 - INFO - Profile saved for 172.20.21.161

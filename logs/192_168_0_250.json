@@ -1,0 +1,16 @@
+{
+  "ip_address": "192.168.0.250",
+  "hostname": "250.0.168.192.in-addr.arpa",
+  "mac_address": "cc:f4:11:99:21:45",
+  "vendor": "Google, Inc.",
+  "computer_name": null,
+  "os_version": null,
+  "last_user": null,
+  "first_seen": "2025-01-10T17:29:24.735851",
+  "last_seen": "2025-01-10T17:29:24.735853",
+  "platform": "Unknown",
+  "is_accessible": false,
+  "services": [],
+  "shared_resources": [],
+  "history": []
+}

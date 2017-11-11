@@ -1,0 +1,16 @@
+{
+  "ip_address": "172.20.21.6",
+  "hostname": "172.20.21.6",
+  "mac_address": "78:45:58:f1:35:fb",
+  "vendor": "Ubiquiti Inc",
+  "computer_name": null,
+  "os_version": null,
+  "last_user": null,
+  "first_seen": "2025-01-15T14:37:04.410094",
+  "last_seen": "2025-01-15T14:37:04.410106",
+  "platform": "Unknown",
+  "is_accessible": false,
+  "services": [],
+  "shared_resources": [],
+  "history": []
+}

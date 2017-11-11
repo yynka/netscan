@@ -1,0 +1,16 @@
+{
+  "ip_address": "192.168.0.79",
+  "hostname": "79.0.168.192.in-addr.arpa",
+  "mac_address": "32:4:fe:48:3:18",
+  "vendor": "{\"errors\":{\"detail\":\"Not Found\"}}",
+  "computer_name": null,
+  "os_version": null,
+  "last_user": null,
+  "first_seen": "2025-01-10T17:28:17.355598",
+  "last_seen": "2025-01-10T17:28:17.355612",
+  "platform": "Unknown",
+  "is_accessible": false,
+  "services": [],
+  "shared_resources": [],
+  "history": []
+}

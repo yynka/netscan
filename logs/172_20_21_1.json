@@ -1,0 +1,16 @@
+{
+  "ip_address": "172.20.21.1",
+  "hostname": "172.20.21.1",
+  "mac_address": "c8:4f:86:a1:fa:b0",
+  "vendor": "Sophos Ltd",
+  "computer_name": null,
+  "os_version": null,
+  "last_user": null,
+  "first_seen": "2025-01-15T14:36:36.362941",
+  "last_seen": "2025-01-15T14:36:36.362971",
+  "platform": "Unknown",
+  "is_accessible": false,
+  "services": [],
+  "shared_resources": [],
+  "history": []
+}
