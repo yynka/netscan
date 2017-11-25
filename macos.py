@@ -4,14 +4,14 @@ import os
 import sys
 from pathlib import Path
 
-# Set up logging first
+# setup logging first
 script_dir = Path(__file__).parent
 log_dir = script_dir / "logs"
 log_dir.mkdir(parents=True, exist_ok=True)
 
 import logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
@@ -19,10 +19,7 @@ logging.basicConfig(
     ]
 )
 
-# Now import the rest
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, Gdk
+# import the rest
 import json
 import subprocess
 import threading
@@ -34,13 +31,15 @@ import psutil
 import socket
 import paramiko
 from dataclasses import dataclass, asdict
-from typing import List, Dict
+from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import traceback
 import re
+import urllib.request
+import urllib.error
 
-# Print clear messaging about script operation
+# tell user what's happening
 print("\n=== Network Scanner ===")
 print("[*] Network Scanner Starting...")
 print("[*] This script will scan your local network for devices")
@@ -148,16 +147,117 @@ class NetworkScanner:
             logging.error(f"Failed to determine network range: {str(e)}\n{traceback.format_exc()}")
             raise
 
-    def get_mac_vendor(self, mac):
+    def get_mac_vendor(self, mac: str) -> str:
+        """get mac vendor with fallback methods"""
         try:
-            logging.info(f"Looking up vendor for MAC: {mac}")
-            response = subprocess.check_output(['curl', '-s', f'https://api.macvendors.com/{mac}'])
-            vendor = response.decode().strip()
-            logging.info(f"Vendor found: {vendor}")
-            return vendor
+            # clean up MAC address
+            mac = mac.replace(':', '').replace('-', '').upper()
+            if len(mac) < 6:
+                return "Unknown"
+            
+            # try multiple lookup methods
+            vendors = []
+            
+            # first try macvendors.com API
+            try:
+                url = f'https://api.macvendors.com/{mac[:6]}'
+                with urllib.request.urlopen(url, timeout=3) as response:
+                    vendor = response.read().decode().strip()
+                    if vendor and not vendor.startswith('{"errors"'):
+                        vendors.append(vendor)
+                        logging.info(f"Vendor found via macvendors.com: {vendor}")
+            except Exception as e:
+                logging.debug(f"macvendors.com lookup failed: {e}")
+            
+            # fallback to local OUI database
+            try:
+                oui_prefix = mac[:6]
+                vendor = self.get_vendor_from_oui(oui_prefix)
+                if vendor:
+                    vendors.append(vendor)
+                    logging.info(f"Vendor found via OUI database: {vendor}")
+            except Exception as e:
+                logging.debug(f"OUI lookup failed: {e}")
+            
+            # return first successful vendor or fallback
+            if vendors:
+                return vendors[0]
+            else:
+                return "Unknown"
+                
         except Exception as e:
-            logging.warning(f"Failed to get MAC vendor: {str(e)}")
+            logging.warning(f"Failed to get MAC vendor for {mac}: {str(e)}")
             return "Unknown"
+
+    def get_vendor_from_oui(self, oui_prefix: str) -> Optional[str]:
+        """lookup vendor from common OUI prefixes"""
+        # common OUI prefixes (first 6 hex digits)
+        oui_database = {
+            '001560': 'Apple, Inc.',
+            '001CF0': 'Apple, Inc.',
+            '001B63': 'Apple, Inc.',
+            '0017F2': 'Apple, Inc.',
+            '000D93': 'Apple, Inc.',
+            '000393': 'Apple, Inc.',
+            '000A95': 'Apple, Inc.',
+            '000A27': 'Apple, Inc.',
+            '000502': 'Apple, Inc.',
+            '3C0630': 'Apple, Inc.',
+            '3C0754': 'Apple, Inc.',
+            '3C15C2': 'Apple, Inc.',
+            '3C2EFF': 'Apple, Inc.',
+            '3C4142': 'Apple, Inc.',
+            '3C7A8A': 'Apple, Inc.',
+            '3CA82A': 'Apple, Inc.',
+            '3CBDD8': 'Apple, Inc.',
+            '3CE072': 'Apple, Inc.',
+            '3CEC88': 'Apple, Inc.',
+            '0014A5': 'Netgear Inc.',
+            '0014A4': 'Netgear Inc.',
+            '0050F2': 'Microsoft Corporation',
+            '0003FF': 'Microsoft Corporation',
+            '00A0C9': 'Intel Corporation',
+            '00E018': 'Asustek Computer Inc.',
+            '001124': 'Giga-Byte Technology Co., Ltd.',
+            '000000': 'Xerox Corporation',
+            '000001': 'Xerox Corporation',
+            '000002': 'Xerox Corporation',
+            '000003': 'Xerox Corporation',
+            '001000': 'Cisco Systems, Inc.',
+            '001001': 'Cisco Systems, Inc.',
+            '001002': 'Cisco Systems, Inc.',
+            '001003': 'Cisco Systems, Inc.',
+            '001004': 'Cisco Systems, Inc.',
+            '001005': 'Cisco Systems, Inc.',
+            '001006': 'Cisco Systems, Inc.',
+            '001007': 'Cisco Systems, Inc.',
+            '001008': 'Cisco Systems, Inc.',
+            '001009': 'Cisco Systems, Inc.',
+            '00100A': 'Cisco Systems, Inc.',
+            '00100B': 'Cisco Systems, Inc.',
+            '00100C': 'Cisco Systems, Inc.',
+            '00100D': 'Cisco Systems, Inc.',
+            '00100E': 'Cisco Systems, Inc.',
+            '00100F': 'Cisco Systems, Inc.',
+            '001010': 'Cisco Systems, Inc.',
+            '001011': 'Cisco Systems, Inc.',
+            '001012': 'Cisco Systems, Inc.',
+            '001013': 'Cisco Systems, Inc.',
+            '001014': 'Cisco Systems, Inc.',
+            '001015': 'Cisco Systems, Inc.',
+            '001016': 'Cisco Systems, Inc.',
+            '001017': 'Cisco Systems, Inc.',
+            '001018': 'Cisco Systems, Inc.',
+            '001019': 'Cisco Systems, Inc.',
+            '00101A': 'Cisco Systems, Inc.',
+            '00101B': 'Cisco Systems, Inc.',
+            '00101C': 'Cisco Systems, Inc.',
+            '00101D': 'Cisco Systems, Inc.',
+            '00101E': 'Cisco Systems, Inc.',
+            '00101F': 'Cisco Systems, Inc.',
+        }
+        
+        return oui_database.get(oui_prefix.upper())
     
     def test_host_accessibility(self, ip):
         try:
@@ -174,16 +274,16 @@ class NetworkScanner:
         try:
             logging.info(f"Testing SSH access to {ip}:{port}")
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(2)  # Increased timeout
+            sock.settimeout(3)
             result = sock.connect_ex((ip, port))
             if result == 0:
                 # Try banner grab
                 try:
-                    banner = sock.recv(1024).decode()
+                    sock.settimeout(2)
+                    banner = sock.recv(1024).decode().strip()
                     logging.info(f"SSH banner: {banner}")
-                    if 'SSH' in banner:
-                        sock.close()
-                        return True
+                    sock.close()
+                    return 'SSH' in banner
                 except:
                     pass
             sock.close()
@@ -192,6 +292,68 @@ class NetworkScanner:
         except Exception as e:
             logging.error(f"SSH test failed for {ip}:{port}: {str(e)}")
             return False
+
+    def test_winrm_access(self, ip, port=5985):
+        try:
+            logging.info(f"Testing WinRM access to {ip}:{port}")
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(3)
+            result = sock.connect_ex((ip, port))
+            sock.close()
+            logging.info(f"WinRM test result for {ip}:{port} = {result == 0}")
+            return result == 0
+        except Exception as e:
+            logging.error(f"WinRM test failed for {ip}:{port}: {str(e)}")
+            return False
+
+    def detect_platform_from_nmap(self, ip):
+        """detect platform using nmap"""
+        try:
+            # try basic scan first
+            logging.info(f"Running basic nmap scan for {ip}")
+            self.nm.scan(ip, arguments='-sV -T4 --version-intensity 3')
+            
+            if ip in self.nm.all_hosts():
+                host_info = self.nm[ip]
+                
+                # check OS matches if available
+                if 'osmatch' in host_info and host_info['osmatch']:
+                    os_name = host_info['osmatch'][0]['name']
+                    logging.info(f"OS detected via nmap: {os_name}")
+                    if 'Mac OS' in os_name or 'macOS' in os_name or 'Darwin' in os_name:
+                        return 'macOS', os_name
+                    elif 'Linux' in os_name:
+                        return 'Linux', os_name
+                    elif 'Windows' in os_name:
+                        return 'Windows', os_name
+                
+                # check service fingerprints
+                if 'tcp' in host_info:
+                    for port, port_info in host_info['tcp'].items():
+                        if 'product' in port_info:
+                            product = port_info['product']
+                            if 'Apple' in product or 'macOS' in product:
+                                return 'macOS', product
+                            elif 'OpenSSH' in product:
+                                # different SSH versions hint at different platforms
+                                if 'OpenSSH_9' in product or 'OpenSSH_8' in product:
+                                    return 'macOS', product  # modern macOS
+                                elif 'OpenSSH_7' in product:
+                                    return 'Linux', product  # common on linux
+                
+                # check hostname patterns
+                hostname = host_info.get('hostname', '')
+                if hostname:
+                    if '.local' in hostname or 'macbook' in hostname.lower() or 'imac' in hostname.lower():
+                        return 'macOS', hostname
+                    elif 'ubuntu' in hostname.lower() or 'debian' in hostname.lower():
+                        return 'Linux', hostname
+                
+                return 'Unknown', None
+            
+        except Exception as e:
+            logging.error(f"Platform detection via nmap failed for {ip}: {str(e)}")
+            return 'Unknown', None
 
     def get_macos_info(self, ip, username=None, password=None):
         logging.info(f"Attempting to gather macOS info for {ip}")
@@ -204,10 +366,10 @@ class NetworkScanner:
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
             logging.info(f"Attempting SSH connection to {ip} with username {username}")
-            ssh.connect(ip, port=self.ssh_port, username=username, password=password, timeout=5)
+            ssh.connect(ip, port=self.ssh_port, username=username, password=password, timeout=10)
             logging.info("SSH connection successful")
 
-            # System info with error handling
+            # get system info
             try:
                 hostname = "Unknown"
                 sw_vers = "Unknown"
@@ -217,7 +379,7 @@ class NetworkScanner:
                 hostname = stdout.readline().strip()
                 
                 stdin, stdout, stderr = ssh.exec_command('sw_vers')
-                sw_vers = stdout.read().decode()
+                sw_vers = stdout.read().decode().strip()
                 
                 stdin, stdout, stderr = ssh.exec_command('who')
                 who = stdout.readline().strip()
@@ -226,32 +388,39 @@ class NetworkScanner:
             except Exception as e:
                 logging.error(f"Error getting system info: {str(e)}")
 
-            # Services with error handling
+            # get services
             services = []
             try:
-                stdin, stdout, stderr = ssh.exec_command('launchctl list')
+                stdin, stdout, stderr = ssh.exec_command('launchctl list | head -20')
                 for line in stdout:
-                    parts = line.strip().split()
-                    if len(parts) >= 3 and parts[0].isdigit():
-                        service_info = ServiceInfo(
-                            name=parts[2],
-                            display_name=parts[2],
-                            status='Running' if parts[0] != "-" else 'Stopped',
-                            start_type='Enabled'
-                        )
-                        services.append(service_info)
+                    line = line.strip()
+                    if line and not line.startswith('PID'):
+                        parts = line.split()
+                        if len(parts) >= 3:
+                            pid = parts[0]
+                            status = parts[1]
+                            name = parts[2]
+                            service_info = ServiceInfo(
+                                name=name,
+                                display_name=name,
+                                status='Running' if pid != "-" else 'Stopped',
+                                start_type='Enabled'
+                            )
+                            services.append(service_info)
                 logging.info(f"Found {len(services)} services")
             except Exception as e:
                 logging.error(f"Error getting services: {str(e)}")
 
-            # Shares with error handling
+            # get shares
             shares = []
             try:
                 stdin, stdout, stderr = ssh.exec_command('sharing -l')
                 for line in stdout:
+                    line = line.strip()
                     if line.startswith('Name:'):
+                        name = line.split(':', 1)[1].strip()
                         share_info = ShareInfo(
-                            name=line.split(':')[1].strip(),
+                            name=name,
                             path='/Volumes',
                             description='macOS Share'
                         )
@@ -260,10 +429,10 @@ class NetworkScanner:
             except Exception as e:
                 logging.error(f"Error getting shares: {str(e)}")
 
-            # Network interfaces
+            # get network interfaces
             interfaces = ""
             try:
-                stdin, stdout, stderr = ssh.exec_command('ifconfig')
+                stdin, stdout, stderr = ssh.exec_command('ifconfig -a')
                 interfaces = stdout.read().decode()
                 logging.info("Network interface information gathered")
             except Exception as e:
@@ -275,7 +444,7 @@ class NetworkScanner:
             return {
                 'hostname': hostname,
                 'os_info': sw_vers,
-                'last_user': who.split()[0] if who else None,
+                'last_user': who.split()[0] if who and who != "Unknown" else None,
                 'services': services,
                 'shares': shares,
                 'interfaces': interfaces,
@@ -283,14 +452,240 @@ class NetworkScanner:
                 'is_accessible': True
             }
         except Exception as e:
-            logging.error(f"macOS info error for {ip}: {str(e)}\n{traceback.format_exc()}")
+            logging.error(f"macOS info error for {ip}: {str(e)}")
         return None
+
+    def get_windows_info(self, ip, username=None, password=None):
+        """gather information about a Windows system via WinRM"""
+        logging.info(f"Attempting to gather Windows info for {ip}")
+        
+        try:
+            # Try to use WinRM if available
+            try:
+                import winrm
+                
+                if username and password:
+                    session = winrm.Session(f'http://{ip}:5985/wsman', auth=(username, password))
+                    
+                    # Get basic system info
+                    hostname = "Unknown"
+                    os_info = "Unknown"
+                    last_user = "Unknown"
+                    services = []
+                    shares = []
+                    
+                    try:
+                        # Get hostname
+                        result = session.run_cmd('hostname')
+                        if result.status_code == 0:
+                            hostname = result.std_out.decode().strip()
+                        
+                        # Get OS info
+                        result = session.run_ps('Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion')
+                        if result.status_code == 0:
+                            os_info = result.std_out.decode().strip()
+                        
+                        # Get last logged user
+                        result = session.run_ps('Get-WmiObject -Class Win32_ComputerSystem | Select-Object UserName')
+                        if result.status_code == 0:
+                            last_user = result.std_out.decode().strip()
+                        
+                        # Get services
+                        result = session.run_ps('Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object Name, DisplayName, Status, StartType -First 20')
+                        if result.status_code == 0:
+                            service_lines = result.std_out.decode().strip().split('\n')
+                            for line in service_lines[3:]:  # Skip header lines
+                                if line.strip():
+                                    parts = line.split(None, 3)
+                                    if len(parts) >= 3:
+                                        service_info = ServiceInfo(
+                                            name=parts[0],
+                                            display_name=parts[1] if len(parts) > 1 else parts[0],
+                                            status=parts[2] if len(parts) > 2 else 'Unknown',
+                                            start_type=parts[3] if len(parts) > 3 else 'Unknown'
+                                        )
+                                        services.append(service_info)
+                        
+                        # Get shares
+                        result = session.run_ps('Get-SmbShare | Select-Object Name, Path, Description')
+                        if result.status_code == 0:
+                            share_lines = result.std_out.decode().strip().split('\n')
+                            for line in share_lines[3:]:  # Skip header lines
+                                if line.strip():
+                                    parts = line.split(None, 2)
+                                    if len(parts) >= 2:
+                                        share_info = ShareInfo(
+                                            name=parts[0],
+                                            path=parts[1] if len(parts) > 1 else 'Unknown',
+                                            description=parts[2] if len(parts) > 2 else 'Windows Share'
+                                        )
+                                        shares.append(share_info)
+                    
+                    except Exception as cmd_error:
+                        logging.error(f"WinRM command execution error: {cmd_error}")
+                    
+                    return {
+                        'hostname': hostname,
+                        'os_info': os_info,
+                        'last_user': last_user.split('\\')[-1] if '\\' in last_user else last_user,
+                        'services': services,
+                        'shares': shares,
+                        'interfaces': 'Windows Network Interfaces',
+                        'platform': 'Windows',
+                        'is_accessible': True
+                    }
+                
+            except ImportError:
+                logging.warning("pywinrm not available, using placeholder Windows info")
+            except Exception as winrm_error:
+                logging.error(f"WinRM connection failed: {winrm_error}")
+            
+            # Fallback to basic info if WinRM fails
+            services = [ServiceInfo(
+                name="Windows Services",
+                display_name="Windows Services",
+                status="Unknown",
+                start_type="Unknown"
+            )]
+            
+            shares = [ShareInfo(
+                name="Windows Shares",
+                path="C:\\",
+                description="Windows Share"
+            )]
+            
+            return {
+                'hostname': ip,
+                'os_info': 'Windows',
+                'last_user': 'Unknown',
+                'services': services,
+                'shares': shares,
+                'interfaces': 'Windows Network Interfaces',
+                'platform': 'Windows',
+                'is_accessible': True
+            }
+            
+        except Exception as e:
+            logging.error(f"Windows info error for {ip}: {str(e)}")
+            return None
+
+    def get_linux_info(self, ip, username=None, password=None):
+        """gather information about a Linux system via SSH"""
+        logging.info(f"Attempting to gather Linux info for {ip}")
+        if not username or not password:
+            logging.warning("No credentials provided for Linux info gathering")
+            return None
+
+        try:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            
+            logging.info(f"Attempting SSH connection to {ip} with username {username}")
+            ssh.connect(ip, port=self.ssh_port, username=username, password=password, timeout=10)
+            logging.info("SSH connection successful")
+
+            # Get system info
+            hostname = "Unknown"
+            os_info = "Unknown"
+            who = "Unknown"
+            services = []
+            shares = []
+            interfaces = ""
+
+            try:
+                stdin, stdout, stderr = ssh.exec_command('hostname')
+                hostname = stdout.readline().strip()
+                
+                # Try multiple commands for OS info
+                os_commands = [
+                    'cat /etc/os-release',
+                    'lsb_release -a',
+                    'hostnamectl'
+                ]
+                for cmd in os_commands:
+                    try:
+                        stdin, stdout, stderr = ssh.exec_command(cmd)
+                        os_info = stdout.read().decode()
+                        if os_info.strip():
+                            break
+                    except Exception:
+                        continue
+                
+                stdin, stdout, stderr = ssh.exec_command('who')
+                who_output = stdout.readline().strip()
+                who = who_output if who_output else "Unknown"
+                
+                logging.info(f"System info gathered: hostname={hostname}, os_info={os_info}, who={who}")
+            except Exception as e:
+                logging.error(f"Error getting system info: {str(e)}")
+
+            # Get services
+            try:
+                stdin, stdout, stderr = ssh.exec_command('systemctl list-units --type=service --state=running --no-pager')
+                for line in stdout:
+                    if '.service' in line:
+                        parts = line.split()
+                        if len(parts) >= 4:
+                            service_name = parts[0].replace('.service', '')
+                            status = 'Running' if 'running' in line.lower() else 'Stopped'
+                            service_info = ServiceInfo(
+                                name=service_name,
+                                display_name=service_name,
+                                status=status,
+                                start_type='Enabled' if 'enabled' in line.lower() else 'Disabled'
+                            )
+                            services.append(service_info)
+                logging.info(f"Found {len(services)} services")
+            except Exception as e:
+                logging.error(f"Error getting services: {str(e)}")
+
+            # Get shares
+            try:
+                stdin, stdout, stderr = ssh.exec_command('showmount -e localhost 2>/dev/null || true')
+                for line in stdout:
+                    if '*' in line:
+                        path = line.split()[0]
+                        share_info = ShareInfo(
+                            name=os.path.basename(path),
+                            path=path,
+                            description='NFS Share'
+                        )
+                        shares.append(share_info)
+                logging.info(f"Found {len(shares)} shares")
+            except Exception as e:
+                logging.error(f"Error getting shares: {str(e)}")
+
+            # Get network interfaces
+            try:
+                stdin, stdout, stderr = ssh.exec_command('ip addr')
+                interfaces = stdout.read().decode()
+                logging.info("Network interface information gathered")
+            except Exception as e:
+                logging.error(f"Error getting network interfaces: {str(e)}")
+
+            ssh.close()
+            logging.info("Successfully gathered all Linux info")
+
+            return {
+                'hostname': hostname,
+                'os_info': os_info,
+                'last_user': who.split()[0] if who != "Unknown" else None,
+                'services': services,
+                'shares': shares,
+                'interfaces': interfaces,
+                'platform': 'Linux',
+                'is_accessible': True
+            }
+        except Exception as e:
+            logging.error(f"Linux info error for {ip}: {str(e)}")
+        return None
+
     def get_device_details(self, ip, username=None, password=None):
         logging.info(f"\n{'='*50}\nStarting device profiling for {ip}\n{'='*50}")
         profile = DeviceProfile(ip)
         
         try:
-            # Basic info
+            # get basic info
             logging.info(f"Getting basic info for {ip}")
             try:
                 profile.hostname = socket.getfqdn(ip)
@@ -299,87 +694,177 @@ class NetworkScanner:
                 logging.error(f"Hostname resolution failed: {str(e)}")
                 profile.hostname = ip
 
-            # Test basic accessibility
+            # test basic accessibility
             is_accessible = self.test_host_accessibility(ip)
+            profile.is_accessible = is_accessible
+            
             if not is_accessible:
                 logging.warning(f"Host {ip} is not responding to basic connectivity tests")
 
-            # MAC address and vendor
+            # get MAC address and vendor
             try:
                 logging.info(f"Getting MAC address for {ip}")
                 arp_output = subprocess.check_output(['arp', '-n', ip]).decode()
                 logging.debug(f"ARP output: {arp_output}")
-                mac = next((line.split()[3] for line in arp_output.split('\n') if ip in line), None)
+                
+                # parse ARP output more carefully
+                mac = None
+                for line in arp_output.split('\n'):
+                    if ip in line:
+                        parts = line.split()
+                        for part in parts:
+                            # look for MAC address pattern
+                            if re.match(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$', part):
+                                mac = part
+                                break
+                        if mac:
+                            break
+                
                 if mac:
                     profile.mac_address = mac
                     logging.info(f"MAC address found: {mac}")
                     profile.vendor = self.get_mac_vendor(mac)
                     logging.info(f"Vendor found: {profile.vendor}")
+                else:
+                    logging.warning(f"No MAC address found for {ip}")
+                    
             except Exception as e:
                 logging.error(f"MAC address lookup failed: {str(e)}")
 
-            # OS detection and port scanning
+                        # platform detection using multiple methods
             try:
-                logging.info(f"Running nmap OS detection for {ip}")
-                self.nm.scan(ip, arguments='-sS -sV -O -A -T4 --version-intensity 5')
-                logging.debug(f"Nmap scan result: {json.dumps(self.nm[ip], indent=2)}")
+                logging.info(f"Starting platform detection for {ip}")
                 
-                if ip in self.nm and 'osmatch' in self.nm[ip]:
-                    profile.os_version = self.nm[ip]['osmatch'][0]['name']
-                    logging.info(f"OS detected: {profile.os_version}")
+                # first try nmap-based detection
+                platform, os_info = self.detect_platform_from_nmap(ip)
+                if platform != 'Unknown':
+                    profile.platform = platform
+                    if os_info:
+                        profile.os_version = os_info
+                    logging.info(f"Platform detected via nmap: {platform}")
                 
-                # Check for specific macOS signatures in open ports
-                if ip in self.nm and 'tcp' in self.nm[ip]:
-                    for port, port_info in self.nm[ip]['tcp'].items():
-                        if 'product' in port_info and ('Apple' in port_info['product'] or 'macOS' in port_info['product']):
-                            profile.platform = 'macOS'
-                            logging.info(f"macOS detected through service fingerprint on port {port}")
-            except Exception as e:
-                logging.error(f"Nmap OS detection failed: {str(e)}")
-
-            # Platform detection
-            try:
-                logging.info(f"Testing SSH access for {ip}")
-                is_macos = self.test_ssh_access(ip, self.ssh_port)
-                logging.info(f"SSH accessible: {is_macos}")
+                # test different access methods
+                winrm_accessible = self.test_winrm_access(ip, self.winrm_port)
+                ssh_accessible = self.test_ssh_access(ip, self.ssh_port)
                 
-                if is_macos:
-                    logging.info("Attempting macOS info gathering...")
-                    macos_info = self.get_macos_info(ip, username, password)
-                    if macos_info:
-                        logging.info("Successfully gathered macOS info")
-                        profile.platform = macos_info['platform']
-                        profile.is_accessible = macos_info['is_accessible']
-                        profile.computer_name = macos_info['hostname']
-                        profile.os_version = macos_info['os_info']
-                        profile.last_user = macos_info['last_user']
-                        profile.services = macos_info['services']
-                        profile.shared_resources = macos_info['shares']
+                if winrm_accessible:
+                    logging.info(f"WinRM accessible on {ip}")
+                    profile.platform = 'Windows'
+                    
+                    # get detailed Windows info
+                    windows_info = self.get_windows_info(ip, username, password)
+                    if windows_info:
+                        profile.is_accessible = True
+                        profile.computer_name = windows_info['hostname']
+                        profile.os_version = windows_info['os_info']
+                        profile.last_user = windows_info['last_user']
+                        profile.services = windows_info['services']
+                        profile.shared_resources = windows_info['shares']
                         
                         profile.history.append(HistoryEntry(
                             timestamp=datetime.now().isoformat(),
                             type='NetworkAdapter',
                             data={
                                 'Description': "Network Interfaces",
-                                'Interfaces': macos_info['interfaces'].split('\n')
+                                'Interfaces': windows_info['interfaces']
                             }
                         ))
+                        
+                elif ssh_accessible:
+                    logging.info(f"SSH accessible on {ip}")
+                    
+                    # try to determine specific platform via SSH
+                    try:
+                        ssh = paramiko.SSHClient()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                        
+                        if username and password:
+                            ssh.connect(ip, port=self.ssh_port, username=username, password=password, timeout=5)
+
+                            # quick platform check
+                            stdin, stdout, stderr = ssh.exec_command('uname -s')
+                            uname = stdout.read().decode().strip()
+                            
+                            if uname == 'Darwin':
+                                profile.platform = 'macOS'
+                                logging.info("Platform confirmed as macOS via SSH")
+                                
+                                # get detailed macOS info
+                                macos_info = self.get_macos_info(ip, username, password)
+                                if macos_info:
+                                    profile.is_accessible = True
+                                    profile.computer_name = macos_info['hostname']
+                                    profile.os_version = macos_info['os_info']
+                                    profile.last_user = macos_info['last_user']
+                                    profile.services = macos_info['services']
+                                    profile.shared_resources = macos_info['shares']
+                                    
+                                    profile.history.append(HistoryEntry(
+                                        timestamp=datetime.now().isoformat(),
+                                        type='NetworkAdapter',
+                                        data={
+                                            'Description': "Network Interfaces",
+                                            'Interfaces': macos_info['interfaces'].split('\n')[:10]  # limit output
+                                        }
+                                    ))
+                                    
+                            elif uname == 'Linux':
+                                profile.platform = 'Linux'
+                                logging.info("Platform confirmed as Linux via SSH")
+                                
+                                # get detailed Linux info
+                                linux_info = self.get_linux_info(ip, username, password)
+                                if linux_info:
+                                    profile.is_accessible = True
+                                    profile.computer_name = linux_info['hostname']
+                                    profile.os_version = linux_info['os_info']
+                                    profile.last_user = linux_info['last_user']
+                                    profile.services = linux_info['services']
+                                    profile.shared_resources = linux_info['shares']
+                                    
+                                    profile.history.append(HistoryEntry(
+                                        timestamp=datetime.now().isoformat(),
+                                        type='NetworkAdapter',
+                                        data={
+                                            'Description': "Network Interfaces",
+                                            'Interfaces': linux_info['interfaces'].split('\n')[:10]
+                                        }
+                                    ))
+                                
+                            ssh.close()
+                        else:
+                            logging.info("SSH accessible but no credentials provided")
+                            
+                    except Exception as ssh_e:
+                        logging.debug(f"SSH detailed detection failed: {ssh_e}")
+                        
                 else:
-                    logging.info("Device not accessible via SSH")
-                    profile.platform = 'Unknown'
-                    profile.is_accessible = False
+                    logging.info("Device not accessible via WinRM or SSH")
+                    
             except Exception as e:
                 logging.error(f"Platform detection failed: {str(e)}")
-
-            # Service discovery history
+                
+            # service discovery history
             try:
-                if ip in self.nm and 'tcp' in self.nm[ip]:
-                    profile.history.append(HistoryEntry(
-                        timestamp=datetime.now().isoformat(),
-                        type='ServiceDiscovery',
-                        data={'ports': self.nm[ip]['tcp']}
-                    ))
-                    logging.info("Added service discovery history")
+                if ip in self.nm.all_hosts():
+                    host_data = self.nm[ip]
+                    if 'tcp' in host_data:
+                        # clean the host data for JSON serialization
+                        tcp_data = {}
+                        for port, port_info in host_data['tcp'].items():
+                            tcp_data[str(port)] = {
+                                'state': port_info.get('state', 'unknown'),
+                                'name': port_info.get('name', 'unknown'),
+                                'product': port_info.get('product', 'unknown'),
+                                'version': port_info.get('version', 'unknown')
+                            }
+                        
+                        profile.history.append(HistoryEntry(
+                            timestamp=datetime.now().isoformat(),
+                            type='ServiceDiscovery',
+                            data={'ports': tcp_data}
+                        ))
+                        logging.info("Added service discovery history")
             except Exception as e:
                 logging.error(f"Failed to add service history: {str(e)}")
             
@@ -399,7 +884,48 @@ class NetworkScanner:
         except Exception as e:
             logging.error(f"Failed to save profile: {str(e)}")
 
-def start_network_scan(network_info):
+    def display_device_summary(self, profiles):
+        """display a summary of all discovered devices"""
+        print("\n" + "="*80)
+        print("DEVICE DISCOVERY SUMMARY")
+        print("="*80)
+        
+        if not profiles:
+            print("No devices discovered.")
+            return
+        
+        for i, profile in enumerate(profiles, 1):
+            print(f"\n[{i}] Device: {profile.ip_address}")
+            print(f"    Hostname: {profile.hostname or 'N/A'}")
+            print(f"    Computer Name: {profile.computer_name or 'N/A'}")
+            print(f"    Platform: {profile.platform or 'Unknown'}")
+            print(f"    OS Version: {profile.os_version or 'N/A'}")
+            print(f"    MAC Address: {profile.mac_address or 'N/A'}")
+            print(f"    Vendor: {profile.vendor or 'N/A'}")
+            print(f"    Accessible: {'Yes' if profile.is_accessible else 'No'}")
+            print(f"    Last User: {profile.last_user or 'N/A'}")
+            print(f"    Services: {len(profile.services)} found")
+            print(f"    Shared Resources: {len(profile.shared_resources)} found")
+            print(f"    First Seen: {profile.first_seen}")
+            print(f"    Last Seen: {profile.last_seen}")
+            
+            # show top services if any
+            if profile.services:
+                print(f"    Top Services:")
+                for service in profile.services[:3]:  # show first 3 services
+                    print(f"      - {service.name} ({service.status})")
+                if len(profile.services) > 3:
+                    print(f"      ... and {len(profile.services) - 3} more")
+            
+            # show shared resources if any
+            if profile.shared_resources:
+                print(f"    Shared Resources:")
+                for share in profile.shared_resources[:2]:  # show first 2 shares
+                    print(f"      - {share.name} ({share.path})")
+                if len(profile.shared_resources) > 2:
+                    print(f"      ... and {len(profile.shared_resources) - 2} more")
+
+def start_network_scan(network_info, fast_mode=False):
     logging.info(f"Starting network scan on {network_info['Interface']}/{network_info['Prefix']}")
     print(f"\n[*] Starting network scan on {network_info['Interface']}/{network_info['Prefix']}")
     print("[*] This may take a few moments...\n")
@@ -407,72 +933,112 @@ def start_network_scan(network_info):
     active_devices = []
 
     try:
-        # Get the base network
+        # get the base network
         base_ip = network_info['Base']
         ip_parts = base_ip.split('.')
         base_prefix = '.'.join(ip_parts[:-1]) + '.'
         
-        # First use arp -a to get initial list of devices
+        # first use arp -a to get initial list of devices
         logging.info("Running arp -a to find devices")
         arp_output = subprocess.check_output(['arp', '-a']).decode()
         logging.info(f"ARP output: {arp_output}")
         
-        # Parse arp output
+        # parse arp output
         arp_devices = set()
         for line in arp_output.split('\n'):
             if line.strip():
                 try:
-                    # Parse IP address from arp output
-                    ip = line.split('(')[1].split(')')[0]
-                    if ip.startswith(base_prefix):
-                        arp_devices.add(ip)
-                        logging.info(f"Found device in ARP: {ip}")
-                except:
+                    # parse IP address from arp output
+                    ip_match = re.search(r'\((\d+\.\d+\.\d+\.\d+)\)', line)
+                    if ip_match:
+                        ip = ip_match.group(1)
+                        if ip.startswith(base_prefix):
+                            arp_devices.add(ip)
+                            logging.info(f"Found device in ARP: {ip}")
+                except Exception as e:
+                    logging.debug(f"Error parsing ARP line: {line} - {e}")
                     continue
 
-        # Also try ping sweep
+        # also try ping sweep (limited range for speed)
         logging.info("Starting ping sweep")
         print("[*] Performing ping sweep...")
-        for i in range(1, 255):
-            ip = f"{base_prefix}{i}"
-            if i % 50 == 0:  # Progress indicator
-                print(f"[*] Scanning... ({i}/254)")
-            
+        
+        # use threading for faster ping sweep
+        def ping_host(ip):
             try:
-                # Fast ping with short timeout
                 ping_cmd = ['ping', '-c', '1', '-W', '1', ip]
                 result = subprocess.run(ping_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return ip if result.returncode == 0 else None
+            except Exception:
+                return None
+
+        # ping sweep with threading
+        max_workers = 10 if fast_mode else 20
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = []
+            for i in range(1, 255):
+                ip = f"{base_prefix}{i}"
+                futures.append(executor.submit(ping_host, ip))
+            
+            for i, future in enumerate(futures):
+                if (i + 1) % 50 == 0:
+                    print(f"[*] Scanning... ({i + 1}/254)")
                 
-                if result.returncode == 0 or ip in arp_devices:
+                result = future.result()
+                if result:
                     try:
-                        hostname = socket.getfqdn(ip)
+                        hostname = socket.getfqdn(result)
                     except:
                         hostname = "N/A"
                     
-                    logging.info(f"Found active host: {ip} (hostname: {hostname})")
-                    print(f"[+] Found active host: {ip} (hostname: {hostname})")
+                    logging.info(f"Found active host: {result} (hostname: {hostname})")
+                    print(f"[+] Found active host: {result} (hostname: {hostname})")
                     active_devices.append({
-                        'IPAddress': ip,
+                        'IPAddress': result,
                         'Hostname': hostname
                     })
 
-            except Exception as e:
-                logging.debug(f"Error pinging {ip}: {str(e)}")
-                continue
+        # add ARP devices that weren't found in ping sweep
+        for arp_ip in arp_devices:
+            if not any(device['IPAddress'] == arp_ip for device in active_devices):
+                try:
+                    hostname = socket.getfqdn(arp_ip)
+                except:
+                    hostname = "N/A"
+                
+                logging.info(f"Adding ARP device: {arp_ip} (hostname: {hostname})")
+                print(f"[+] Adding ARP device: {arp_ip} (hostname: {hostname})")
+                active_devices.append({
+                    'IPAddress': arp_ip,
+                    'Hostname': hostname
+                })
 
-            # Now run nmap for additional verification
-        if active_devices:
-            print("\n[*] Verifying discovered devices with nmap...")
+        # now run nmap for additional verification (skip in fast mode)
+        if active_devices and not fast_mode:
+            print(f"\n[*] Verifying {len(active_devices)} discovered devices with nmap...")
+            print("[*] Note: Some devices may not respond to nmap but are still active")
             nm = nmap.PortScanner()
+            verified_devices = []
+            
             for device in active_devices:
                 ip = device['IPAddress']
                 try:
-                    logging.info(f"Running detailed nmap scan on {ip}")
-                    nm.scan(ip, arguments='-sn -T4')
+                    logging.info(f"Running nmap verification scan on {ip}")
+                    # try multiple nmap techniques for better detection
+                    nm.scan(ip, arguments='-sn -PE -PP -PS21,22,23,25,53,80,111,199,443,993,995,5985 -T4')
                     if ip in nm.all_hosts():
+                        verified_devices.append(device)
                         logging.info(f"Nmap confirmed {ip} is active")
+                    else:
+                        logging.debug(f"Nmap could not verify {ip} - keeping device anyway")
+                        # keep device even if nmap verification fails
+                        verified_devices.append(device)
                 except Exception as e:
                     logging.error(f"Nmap scan error for {ip}: {str(e)}")
+                    # keep device even if nmap fails
+                    verified_devices.append(device)
+            
+            active_devices = verified_devices
         
         if not active_devices:
             print("\n[!] No active devices found on the network")
@@ -493,213 +1059,9 @@ def start_network_scan(network_info):
     
     return active_devices
 
-class DeviceMonitorWindow(Gtk.Window):
-    def __init__(self, devices, refresh_interval=300):
-        Gtk.Window.__init__(self, title="Network Device Monitor")
-        self.set_default_size(1000, 700)
-        self.devices = devices
-        self.refresh_interval = refresh_interval
-        logging.info("Initializing DeviceMonitorWindow")
-
-        # Header bar with refresh button
-        header = Gtk.HeaderBar()
-        header.set_show_close_button(True)
-        header.props.title = "Network Device Monitor"
-        self.set_titlebar(header)
-
-        refresh_button = Gtk.Button()
-        refresh_button.add(Gtk.Image.new_from_icon_name("view-refresh-symbolic", 
-                                                       Gtk.IconSize.BUTTON))
-        refresh_button.connect("clicked", self.on_refresh_clicked)
-        header.pack_end(refresh_button)
-
-        # Main container with split panes
-        paned = Gtk.Paned()
-        self.add(paned)
-
-        # Device list (left pane)
-        scrolled_list = Gtk.ScrolledWindow()
-        scrolled_list.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled_list.set_size_request(250, -1)
-        
-        self.device_list = Gtk.ListBox()
-        self.device_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
-        self.device_list.connect("row-selected", self.on_device_selected)
-        scrolled_list.add(self.device_list)
-        
-        # Add devices to list with improved status indicators
-        for device in devices:
-            row = Gtk.ListBoxRow()
-            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-            row.add(hbox)
-            
-            status_icon = Gtk.Image()
-            if device.is_accessible:
-                status_icon.set_from_icon_name("emblem-default", Gtk.IconSize.SMALL_TOOLBAR)
-            else:
-                status_icon.set_from_icon_name("emblem-important", Gtk.IconSize.SMALL_TOOLBAR)
-            hbox.pack_start(status_icon, False, False, 0)
-            
-            label = Gtk.Label(
-                label=f"{device.computer_name or device.hostname or device.ip_address} [{device.platform or 'Unknown'}]"
-            )
-            label.set_alignment(0, 0.5)
-            hbox.pack_start(label, True, True, 0)
-            
-            self.device_list.add(row)
-
-        paned.pack1(scrolled_list, False, False)
-
-        # Details notebook (right pane)
-        self.details_notebook = Gtk.Notebook()
-        
-        # Info page
-        self.info_grid = Gtk.Grid()
-        self.info_grid.set_column_spacing(12)
-        self.info_grid.set_row_spacing(6)
-        self.info_grid.set_margin_start(10)
-        self.info_grid.set_margin_end(10)
-        self.info_grid.set_margin_top(10)
-        self.info_grid.set_margin_bottom(10)
-        scroll = Gtk.ScrolledWindow()
-        scroll.add(self.info_grid)
-        self.details_notebook.append_page(scroll, Gtk.Label(label="Information"))
-        
-        # Services page
-        self.services_store = Gtk.ListStore(str, str, str, str)
-        self.services_view = Gtk.TreeView(model=self.services_store)
-        for i, title in enumerate(["Name", "Display Name", "Status", "Start Type"]):
-            column = Gtk.TreeViewColumn(title, Gtk.CellRendererText(), text=i)
-            self.services_view.append_column(column)
-        
-        scroll = Gtk.ScrolledWindow()
-        scroll.add(self.services_view)
-        self.details_notebook.append_page(scroll, Gtk.Label(label="Services"))
-        
-        # Shares page
-        self.shares_store = Gtk.ListStore(str, str, str)
-        self.shares_view = Gtk.TreeView(model=self.shares_store)
-        for i, title in enumerate(["Name", "Path", "Description"]):
-            column = Gtk.TreeViewColumn(title, Gtk.CellRendererText(), text=i)
-            self.shares_view.append_column(column)
-        
-        scroll = Gtk.ScrolledWindow()
-        scroll.add(self.shares_view)
-        self.details_notebook.append_page(scroll, Gtk.Label(label="Shared Resources"))
-        
-        # History page
-        self.history_store = Gtk.ListStore(str, str, str)
-        self.history_view = Gtk.TreeView(model=self.history_store)
-        for i, title in enumerate(["Timestamp", "Type", "Details"]):
-            column = Gtk.TreeViewColumn(title, Gtk.CellRendererText(), text=i)
-            self.history_view.append_column(column)
-        
-        scroll = Gtk.ScrolledWindow()
-        scroll.add(self.history_view)
-        self.details_notebook.append_page(scroll, Gtk.Label(label="History"))
-
-        paned.pack2(self.details_notebook, True, False)
-
-        # Setup refresh timer
-        GLib.timeout_add_seconds(refresh_interval, self.refresh_display)
-        logging.info("DeviceMonitorWindow initialization complete")
-
-    def on_device_selected(self, listbox, row):
-        if row is not None:
-            logging.info(f"Device selected: index={row.get_index()}")
-            self.update_details(row.get_index())
-
-    def on_refresh_clicked(self, button):
-        logging.info("Manual refresh triggered")
-        self.refresh_display()
-
-    def update_details(self, index):
-        if index < 0:
-            return
-
-        try:
-            device = self.devices[index]
-            logging.info(f"Updating details for device: {device.ip_address}")
-            
-            # Clear existing details
-            for child in self.info_grid.get_children():
-                self.info_grid.remove(child)
-            
-            self.services_store.clear()
-            self.shares_store.clear()
-            self.history_store.clear()
-
-            # Update info page with improved formatting
-            info_items = [
-                ("Computer Name", device.computer_name),
-                ("IP Address", device.ip_address),
-                ("Platform", device.platform),
-                ("MAC Address", device.mac_address),
-                ("Vendor", device.vendor),
-                ("OS Version", device.os_version),
-                ("Last User", device.last_user),
-                ("First Seen", device.first_seen),
-                ("Last Seen", device.last_seen),
-                ("Status", "Accessible" if device.is_accessible else "Inaccessible")
-            ]
-
-            for i, (label, value) in enumerate(info_items):
-                label_widget = Gtk.Label(label=f"{label}:")
-                label_widget.set_alignment(1, 0.5)
-                value_widget = Gtk.Label(label=str(value if value is not None else "N/A"))
-                value_widget.set_alignment(0, 0.5)
-                value_widget.set_line_wrap(True)
-                
-                self.info_grid.attach(label_widget, 0, i, 1, 1)
-                self.info_grid.attach(value_widget, 1, i, 1, 1)
-
-            # Update services page
-            if device.services:
-                for service in device.services:
-                    self.services_store.append([
-                        service.name,
-                        service.display_name,
-                        service.status,
-                        service.start_type
-                    ])
-
-            # Update shares page
-            if device.shared_resources:
-                for share in device.shared_resources:
-                    self.shares_store.append([
-                        share.name,
-                        share.path,
-                        share.description
-                    ])
-
-            # Update history page
-            if device.history:
-                for entry in sorted(device.history, key=lambda x: x.timestamp, reverse=True):
-                    self.history_store.append([
-                        entry.timestamp,
-                        entry.type,
-                        json.dumps(entry.data, indent=2)
-                    ])
-                
-            logging.info("Details updated successfully")
-        except Exception as e:
-            logging.error(f"Error updating details: {str(e)}\n{traceback.format_exc()}")
-
-    def refresh_display(self):
-        try:
-            logging.info("Refreshing display")
-            selected_row = self.device_list.get_selected_row()
-            if selected_row is not None:
-                self.update_details(selected_row.get_index())
-        except Exception as e:
-            logging.error(f"Error refreshing display: {str(e)}")
-        return True
-
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description='Enhanced Network Scanner')
-    parser.add_argument('--monitor', action='store_true', help='Enable monitoring mode')
-    parser.add_argument('--refresh', type=int, default=300, help='Refresh interval in seconds')
+    parser = argparse.ArgumentParser(description='Network Scanner')
     parser.add_argument('--log-path', type=str, 
                        default=str(Path(__file__).parent / "logs"),
                        help='Path to store device profiles')
@@ -708,6 +1070,8 @@ def main():
     parser.add_argument('--ssh-port', type=int, default=22, help='SSH port for Linux/macOS systems')
     parser.add_argument('--winrm-port', type=int, default=5985, help='WinRM port for Windows systems')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging')
+    parser.add_argument('--summary', action='store_true', help='Display detailed device summary')
+    parser.add_argument('--fast', action='store_true', help='Fast scan mode (fewer checks)')
     args = parser.parse_args()
 
     if args.debug:
@@ -716,7 +1080,7 @@ def main():
     try:
         print("\n=== Network Scanner ===")
         print("[*] Initializing...")
-        logging.info("Starting enhanced network scanner...")
+        logging.info("Starting network scanner...")
         logging.info(f"Arguments: {args}")
         
         scanner = NetworkScanner(log_path=args.log_path, 
@@ -726,7 +1090,7 @@ def main():
         network_range = scanner.get_network_range()
         logging.info(f"Network range determined: {network_range}")
         
-        active_devices = start_network_scan(network_range)
+        active_devices = start_network_scan(network_range, args.fast)
         
         if active_devices:
             device_profiles = []
@@ -743,17 +1107,32 @@ def main():
                     logging.info(f"Profile saved for {ip}")
                     print(f"[+] Platform detected: {profile.platform}")
                     print(f"[+] Accessibility: {'Yes' if profile.is_accessible else 'No'}")
+                    if profile.vendor and profile.vendor != 'Unknown':
+                        print(f"[+] Vendor: {profile.vendor}")
                 except Exception as e:
                     logging.error(f"Failed to profile device {ip}: {str(e)}")
                     print(f"[!] Failed to profile device {ip}: {str(e)}")
 
-            if args.monitor:
-                logging.info("Starting monitoring mode...")
-                print("\n[*] Starting monitoring mode...")
-                win = DeviceMonitorWindow(device_profiles, args.refresh)
-                win.connect("destroy", Gtk.main_quit)
-                win.show_all()
-                Gtk.main()
+            # display summary
+            if args.summary:
+                scanner.display_device_summary(device_profiles)
+            
+            # show quick stats
+            platforms = {}
+            accessible_count = 0
+            for profile in device_profiles:
+                platform = profile.platform or 'Unknown'
+                platforms[platform] = platforms.get(platform, 0) + 1
+                if profile.is_accessible:
+                    accessible_count += 1
+            
+            print(f"\n[+] Scan complete! Found {len(device_profiles)} devices.")
+            print(f"[+] Detailed profiles saved to: {args.log_path}")
+            print(f"[+] Use --summary flag to see detailed device information")
+            print(f"\n[+] Platform breakdown:")
+            for platform, count in platforms.items():
+                print(f"    {platform}: {count} devices")
+            print(f"[+] Accessible devices: {accessible_count}/{len(device_profiles)}")
         else:
             print("\n[*] No devices to profile")
             print("[*] Scan complete")
