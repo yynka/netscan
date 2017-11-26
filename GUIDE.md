@@ -1,4 +1,18 @@
-# Enhanced Network Security Scanner - orca.us.org
+<a id="top"></a>
+```
+     ███╗   ██╗███████╗████████╗███████╗ ██████╗ █████╗ ███╗   ██╗
+     ████╗  ██║██╔════╝╚══██╔══╝██╔════╝██╔════╝██╔══██╗████╗  ██║
+     ██╔██╗ ██║█████╗     ██║   ███████╗██║     ███████║██╔██╗ ██║
+     ██║╚██╗██║██╔══╝     ██║   ╚════██║██║     ██╔══██║██║╚██╗██║
+     ██║ ╚████║███████╗   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
+     ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
+```
+
+**Enhanced Network Security Scanner - Complete Documentation**
+
+[![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat&logo=windows&logoColor=white)](#windows)
+[![macOS](https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white)](#macos)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)](#linux)
 
 ## Overview
 
@@ -8,47 +22,14 @@ The scanner consists of three platform-specific scripts that each provide **full
 
 ## Features
 
-### 🔍 **Advanced Device Discovery**
-- **Cross-Platform Detection** - Each OS script can detect all device types (Windows, macOS, Linux)
-- **ARP Scanning** for layer 2 discovery
-- **Multi-threaded Ping Sweeps** for fast network enumeration
-- **MAC Address Resolution** with extensive vendor database
-- **DNS Enumeration** with PTR and A record lookups
+▸ **Advanced Device Discovery** - Cross-platform detection with ARP scanning and multi-threaded ping sweeps  
+▸ **Security Assessment** - Vulnerability scanning with SSL/TLS certificate analysis  
+▸ **Device Fingerprinting** - OS detection with service version detection and device classification  
+▸ **Multi-Protocol Support** - SSH, WinRM, and SNMP enumeration across all platforms  
+▸ **Network Topology** - Relationship mapping between devices with subnet analysis  
+▸ **Comprehensive Reporting** - Detailed security reports with historical tracking  
 
-### 🛡️ **Security Assessment**
-- **Vulnerability Scanning** for common security issues
-- **Port Scanning** with service detection and cross-platform service enumeration
-- **SSL/TLS Certificate Analysis**
-- **Default Credential Detection**
-- **Security Score Calculation**
-
-### 📊 **Device Fingerprinting**
-- **OS Detection** using multiple methods
-- **Service Version Detection**
-- **Device Type Classification** (router, switch, printer, etc.)
-- **SNMP Information Gathering**
-- **Platform Identification** (Windows, macOS, Linux)
-- **WinRM Integration** for Windows device profiling
-- **SSH Integration** for Linux/macOS device profiling
-
-### 🔌 **Multi-Protocol Support**
-- **SSH Access** for Linux and macOS device profiling
-- **WinRM Access** for Windows device profiling
-- **SNMP Enumeration** for network device information
-- **Service Detection** across all platforms
-
-### 📈 **Network Topology**
-- **Relationship Mapping** between devices
-- **Subnet Analysis**
-- **Network Visualization Data**
-- **Connection Tracking**
-
-### 📋 **Comprehensive Reporting**
-- **Detailed Security Reports**
-- **Device Inventory**
-- **Vulnerability Assessment**
-- **Historical Tracking**
-- **JSON and Text Output**
+---
 
 ## Installation
 
@@ -82,6 +63,8 @@ pip install -r requirements.txt
 pip install netifaces python-nmap psutil paramiko pywinrm>=0.4.3
 ```
 
+---
+
 ## Platform-Specific Scripts
 
 ### Linux Script (`linux.py`)
@@ -102,6 +85,8 @@ Run on Windows systems to scan for all device types:
 # Run as Administrator
 python windows.py [options]
 ```
+
+---
 
 ## Usage
 
@@ -138,30 +123,34 @@ sudo python3 linux.py --ssh-port 2222
 sudo python3 linux.py --username admin --password secret --winrm-port 5986 --ssh-port 2222 --fast --summary
 ```
 
+---
+
 ## Cross-Platform Device Detection
 
 Each script can detect and profile devices from all three platforms:
 
 ### Windows Device Detection
-- **WinRM Protocol** (port 5985/5986) for remote Windows management
-- **PowerShell Commands** for system information gathering
-- **Service Enumeration** using Get-Service
-- **Share Information** using Get-SmbShare
-- **System Information** using Get-ComputerInfo
+▪ **WinRM Protocol** (port 5985/5986) for remote Windows management  
+▪ **PowerShell Commands** for system information gathering  
+▪ **Service Enumeration** using Get-Service  
+▪ **Share Information** using Get-SmbShare  
+▪ **System Information** using Get-ComputerInfo  
 
 ### macOS Device Detection
-- **SSH Protocol** (port 22) for remote access
-- **Platform Detection** using `uname -s` (Darwin)
-- **Service Enumeration** using `launchctl list`
-- **System Information** using standard Unix commands
-- **Process Information** using `ps aux`
+▪ **SSH Protocol** (port 22) for remote access  
+▪ **Platform Detection** using `uname -s` (Darwin)  
+▪ **Service Enumeration** using `launchctl list`  
+▪ **System Information** using standard Unix commands  
+▪ **Process Information** using `ps aux`  
 
 ### Linux Device Detection
-- **SSH Protocol** (port 22) for remote access
-- **Platform Detection** using `uname -s` (Linux)
-- **Service Enumeration** using `systemctl list-units`
-- **System Information** using standard Unix commands
-- **Process Information** using `ps aux`
+▪ **SSH Protocol** (port 22) for remote access  
+▪ **Platform Detection** using `uname -s` (Linux)  
+▪ **Service Enumeration** using `systemctl list-units`  
+▪ **System Information** using standard Unix commands  
+▪ **Process Information** using `ps aux`  
+
+---
 
 ## Sample Output
 
@@ -254,116 +243,124 @@ SECURITY RECOMMENDATIONS
    - TELNET_OPEN: 1 device affected
 ```
 
+---
+
 ## Data Collection
 
 The enhanced scanner collects comprehensive information about each device:
 
 ### Basic Information
-- IP Address
-- Hostname/Computer Name
-- MAC Address
-- Vendor Information
-- Device Type Classification
-- Operating System/Platform (Windows/macOS/Linux)
-- Architecture
+▪ IP Address  
+▪ Hostname/Computer Name  
+▪ MAC Address  
+▪ Vendor Information  
+▪ Device Type Classification  
+▪ Operating System/Platform (Windows/macOS/Linux)  
+▪ Architecture  
 
 ### Network Information
-- Network Interfaces
-- Open Ports (including SSH:22, WinRM:5985)
-- Running Services
-- Service Versions
-- Service Banners
+▪ Network Interfaces  
+▪ Open Ports (including SSH:22, WinRM:5985)  
+▪ Running Services  
+▪ Service Versions  
+▪ Service Banners  
 
 ### Platform-Specific Information
 
 #### Windows Devices (via WinRM)
-- Windows Services (Get-Service)
-- SMB Shares (Get-SmbShare)
-- Computer Information (Get-ComputerInfo)
-- System Architecture
-- Windows Version
+▪ Windows Services (Get-Service)  
+▪ SMB Shares (Get-SmbShare)  
+▪ Computer Information (Get-ComputerInfo)  
+▪ System Architecture  
+▪ Windows Version  
 
 #### macOS Devices (via SSH)
-- LaunchD Services (launchctl list)
-- Running Processes (ps aux)
-- System Information (uname -a)
-- Darwin Version
-- Hardware Platform
+▪ LaunchD Services (launchctl list)  
+▪ Running Processes (ps aux)  
+▪ System Information (uname -a)  
+▪ Darwin Version  
+▪ Hardware Platform  
 
 #### Linux Devices (via SSH)
-- SystemD Services (systemctl list-units)
-- Running Processes (ps aux)
-- System Information (uname -a)
-- Distribution Information
-- Kernel Version
+▪ SystemD Services (systemctl list-units)  
+▪ Running Processes (ps aux)  
+▪ System Information (uname -a)  
+▪ Distribution Information  
+▪ Kernel Version  
 
 ### Security Information
-- Vulnerability Assessment
-- Security Score (0-100)
-- SSL/TLS Certificate Status
-- Default Credential Checks
-- Service Configuration Issues
+▪ Vulnerability Assessment  
+▪ Security Score (0-100)  
+▪ SSL/TLS Certificate Status  
+▪ Default Credential Checks  
+▪ Service Configuration Issues  
 
 ### SNMP Information (if available)
-- System Description
-- System Name
-- System Location
-- System Contact
-- System Uptime
-- Interface Details
+▪ System Description  
+▪ System Name  
+▪ System Location  
+▪ System Contact  
+▪ System Uptime  
+▪ Interface Details  
 
 ### Historical Data
-- First Seen Timestamp
-- Last Seen Timestamp
-- Change Tracking
-- Vulnerability Timeline
+▪ First Seen Timestamp  
+▪ Last Seen Timestamp  
+▪ Change Tracking  
+▪ Vulnerability Timeline  
+
+---
 
 ## Output Files
 
 The scanner generates several output files:
 
 ### Individual Device Profiles
-- `192_168_1_1.json` - Detailed device information
-- `192_168_1_2.json` - JSON format for easy parsing
+▪ `192_168_1_1.json` - Detailed device information  
+▪ `192_168_1_2.json` - JSON format for easy parsing  
 
 ### Comprehensive Reports
-- `network_security_report_YYYYMMDD_HHMMSS.txt` - Human-readable report
-- `network_topology.json` - Network topology data
-- `netscan_enhanced.log` - Detailed scan logs
+▪ `network_security_report_YYYYMMDD_HHMMSS.txt` - Human-readable report  
+▪ `network_topology.json` - Network topology data  
+▪ `netscan_enhanced.log` - Detailed scan logs  
 
 ### Database Storage
-- `network_history.db` - SQLite database for historical tracking
-- Tracks device changes over time
-- Vulnerability timeline
-- Traffic statistics
+▪ `network_history.db` - SQLite database for historical tracking  
+▪ Tracks device changes over time  
+▪ Vulnerability timeline  
+▪ Traffic statistics  
+
+---
 
 ## Security Considerations
 
 ### Required Permissions
-- **Root/Administrator** privileges required for:
+▪ **Root/Administrator** privileges required for:
   - Raw socket access (ARP scanning)
   - ICMP ping packets
   - Advanced port scanning
   - OS fingerprinting
 
 ### Network Impact
-- Scans are designed to be **non-intrusive**
-- Configurable thread limits to prevent network overload
-- Timeout settings to avoid hanging connections
-- Respectful of network resources
-- **Fast mode** available to skip time-consuming nmap verification
+▪ Scans are designed to be **non-intrusive**  
+▪ Configurable thread limits to prevent network overload  
+▪ Timeout settings to avoid hanging connections  
+▪ Respectful of network resources  
+▪ **Fast mode** available to skip time-consuming nmap verification  
 
 ### Authentication Requirements
-- **SSH Credentials** needed for Linux/macOS device profiling
-- **WinRM Credentials** needed for Windows device profiling
-- **SNMP Community Strings** for network device information
-- Credentials are used read-only and not stored permanently
+▪ **SSH Credentials** needed for Linux/macOS device profiling  
+▪ **WinRM Credentials** needed for Windows device profiling  
+▪ **SNMP Community Strings** for network device information  
+▪ Credentials are used read-only and not stored permanently  
 
 ### Privacy and Compliance
-- All scans are **passive** and **non-exploitative**
-- No data is modified on target systems
-- No passwords or sensitive data are collected
-- Compliant with network monitoring best practices
+▪ All scans are **passive** and **non-exploitative**  
+▪ No data is modified on target systems  
+▪ No passwords or sensitive data are collected  
+▪ Compliant with network monitoring best practices  
+
+---
 
 ## Troubleshooting
 
@@ -414,26 +411,67 @@ sudo apt-get install python3-dev libpcap-dev
 pip install --force-reinstall netifaces python-nmap psutil paramiko pywinrm
 ```
 
+---
+
+## Command Reference
+
+### Universal Options
+| Option | Description |
+|--------|-------------|
+| `--summary` | Display detailed device summary after scan |
+| `--fast` | Fast scan mode (fewer checks, quicker results) |
+| `--debug` | Enable debug logging for troubleshooting |
+| `--log-path PATH` | Custom log directory path |
+| `--username USER` | Authentication username for device access |
+| `--password PASS` | Authentication password for device access |
+| `--ssh-port N` | SSH port number (default: 22) |
+| `--winrm-port N` | WinRM port number (default: 5985) |
+
+### Platform Implementation
+| Platform | Command Format | Authentication Methods |
+|----------|----------------|----------------------|
+| **Windows** | `python windows.py [options]` | SSH, WinRM |
+| **macOS** | `python3 macos.py [options]` | SSH |
+| **Linux** | `python3 linux.py [options]` | SSH |
+
+---
+
 ## Integration with orca.us.org
 
 This scanner is designed as the **first module** of the orca.us.org security suite:
 
-1. **Network Discovery** - This module provides comprehensive device inventory
-2. **Vulnerability Assessment** - Feeds into advanced security analysis
-3. **Asset Management** - Provides baseline for asset tracking
-4. **Security Monitoring** - Historical data for change detection
-5. **Incident Response** - Network context for security incidents
+▪ **Network Discovery** - This module provides comprehensive device inventory  
+▪ **Vulnerability Assessment** - Feeds into advanced security analysis  
+▪ **Asset Management** - Provides baseline for asset tracking  
+▪ **Security Monitoring** - Historical data for change detection  
+▪ **Incident Response** - Network context for security incidents  
+
+---
+
+## Dependencies
+
+| Package | Purpose | Version |
+|---------|---------|---------|
+| **netifaces** | Network interface access | ≥0.11.0 |
+| **python-nmap** | Network scanning capabilities | ≥0.7.1 |
+| **psutil** | System monitoring utilities | ≥5.9.0 |
+| **paramiko** | SSH connections | ≥3.0.0 |
+| **pywinrm** | Windows Remote Management | ≥0.4.3 |
+
+---
 
 ## Future Enhancements
 
-- **Traffic Analysis** - Passive network monitoring
-- **Behavioral Analysis** - Device behavior patterns
-- **Threat Intelligence** - Integration with threat feeds
-- **Automated Remediation** - Suggested fixes for vulnerabilities
-- **Web Dashboard** - Real-time network visualization
-- **API Integration** - RESTful API for external tools
-- **Enhanced Authentication** - Certificate-based authentication for SSH/WinRM
-- **Privilege Escalation** - Automated privilege detection and escalation
+▪ **Traffic Analysis** - Passive network monitoring  
+▪ **Behavioral Analysis** - Device behavior patterns  
+▪ **Threat Intelligence** - Integration with threat feeds  
+▪ **Automated Remediation** - Suggested fixes for vulnerabilities  
+▪ **Web Dashboard** - Real-time network visualization  
+▪ **API Integration** - RESTful API for external tools  
+▪ **Enhanced Authentication** - Certificate-based authentication for SSH/WinRM  
+▪ **Privilege Escalation** - Automated privilege detection and escalation  
+
+---
 
 ## License
 
@@ -442,8 +480,10 @@ This tool is part of the orca.us.org security suite and is intended for authoriz
 ## Support
 
 For issues and questions:
-- Check the log files in the output directory
-- Review the troubleshooting section
-- Ensure all dependencies are properly installed
-- Verify network permissions and connectivity
-- Test SSH/WinRM connectivity manually before running scans 
+▪ Check the log files in the output directory  
+▪ Review the troubleshooting section  
+▪ Ensure all dependencies are properly installed  
+▪ Verify network permissions and connectivity  
+▪ Test SSH/WinRM connectivity manually before running scans  
+
+**※ Security Note:** This tool requires administrative privileges on all platforms. Use responsibly and in compliance with your organization's security policies. 
