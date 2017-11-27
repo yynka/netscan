@@ -176,7 +176,7 @@ class NetworkScanner:
                     if vendor and not vendor.startswith('{"errors"'):
                         vendors.append(vendor)
                         logging.info(f"Vendor found via macvendors.com: {vendor}")
-            except Exception as e:
+        except Exception as e:
                 logging.debug(f"macvendors.com lookup failed: {e}")
             
             # fallback to local OUI database
@@ -193,7 +193,7 @@ class NetworkScanner:
             if vendors:
                 return vendors[0]
             else:
-                return "Unknown"
+            return "Unknown"
                 
         except Exception as e:
             logging.warning(f"Failed to get MAC vendor for {mac}: {str(e)}")
@@ -683,7 +683,7 @@ class NetworkScanner:
             }
         except Exception as e:
             logging.error(f"macOS info error for {ip}: {str(e)}")
-        return None
+            return None
 
     def get_device_details(self, ip, username=None, password=None):
         """get detailed information about a network device"""
@@ -796,7 +796,7 @@ class NetworkScanner:
                                 'Interfaces': windows_info['interfaces']
                             }
                         ))
-                        
+                
                 elif ssh_accessible:
                     logging.info(f"SSH accessible on {ip}")
                     
@@ -817,23 +817,23 @@ class NetworkScanner:
                                 logging.info("Platform confirmed as Linux via SSH")
                                 
                                 # get detailed Linux info
-                                linux_info = self.get_linux_info(ip, username, password)
-                                if linux_info:
+                    linux_info = self.get_linux_info(ip, username, password)
+                    if linux_info:
                                     profile.is_accessible = True
-                                    profile.computer_name = linux_info['hostname']
-                                    profile.os_version = linux_info['os_info']
-                                    profile.last_user = linux_info['last_user']
-                                    profile.services = linux_info['services']
-                                    profile.shared_resources = linux_info['shares']
-                                    
-                                    profile.history.append(HistoryEntry(
-                                        timestamp=datetime.now().isoformat(),
-                                        type='NetworkAdapter',
-                                        data={
-                                            'Description': "Network Interfaces",
+                        profile.computer_name = linux_info['hostname']
+                        profile.os_version = linux_info['os_info']
+                        profile.last_user = linux_info['last_user']
+                        profile.services = linux_info['services']
+                        profile.shared_resources = linux_info['shares']
+                        
+                        profile.history.append(HistoryEntry(
+                            timestamp=datetime.now().isoformat(),
+                            type='NetworkAdapter',
+                            data={
+                                'Description': "Network Interfaces",
                                             'Interfaces': linux_info['interfaces'].split('\n')[:10]
-                                        }
-                                    ))
+                            }
+                        ))
                                     
                             elif uname == 'Darwin':
                                 profile.platform = 'macOS'
@@ -859,7 +859,7 @@ class NetworkScanner:
                                     ))
                                 
                             ssh.close()
-                        else:
+                else:
                             logging.info("SSH accessible but no credentials provided")
                             
                     except Exception as ssh_e:
@@ -1011,7 +1011,7 @@ def start_network_scan(network_info, fast_mode=False):
             for i in range(1, 255):
                 ip = f"{base_prefix}{i}"
                 futures.append(executor.submit(ping_host, ip))
-            
+
             for i, future in enumerate(futures):
                 if (i + 1) % 50 == 0:
                     print(f"[*] Scanning... ({i + 1}/254)")
@@ -1033,17 +1033,17 @@ def start_network_scan(network_info, fast_mode=False):
         # add ip neighbor devices that weren't found in ping sweep
         for ip_neigh_ip in ip_neigh_devices:
             if not any(device['IPAddress'] == ip_neigh_ip for device in active_devices):
-                try:
+                        try:
                     hostname = socket.getfqdn(ip_neigh_ip)
                 except:
-                    hostname = "N/A"
-                
+                            hostname = "N/A"
+                        
                 logging.info(f"Adding ip neighbor device: {ip_neigh_ip} (hostname: {hostname})")
                 print(f"[+] Adding ip neighbor device: {ip_neigh_ip} (hostname: {hostname})")
-                active_devices.append({
+                        active_devices.append({
                     'IPAddress': ip_neigh_ip,
-                    'Hostname': hostname
-                })
+                            'Hostname': hostname
+                        })
 
         # now run nmap for additional verification (skip in fast mode)
         if active_devices and not fast_mode:
@@ -1071,7 +1071,7 @@ def start_network_scan(network_info, fast_mode=False):
                     verified_devices.append(device)
             
             active_devices = verified_devices
-        
+
         if not active_devices:
             print("\n[!] No active devices found on the network")
             print("[!] This could mean:")

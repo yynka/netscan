@@ -26,7 +26,7 @@ failed = 0
 for module_name, description in dependencies:
     try:
         if module_name == 'nmap':
-            import nmap
+    import nmap
             # Test that nmap scanner can be instantiated
             nm = nmap.PortScanner()
             print(f"✓ {module_name:<12} - {description}")
@@ -37,7 +37,7 @@ for module_name, description in dependencies:
             __import__(module_name)
             print(f"✓ {module_name:<12} - {description}")
         passed += 1
-    except ImportError as e:
+except ImportError as e:
         print(f"✗ {module_name:<12} - {description} (FAILED: {e})")
         failed += 1
     except Exception as e:

@@ -40,15 +40,11 @@
 git clone https://github.com/yynka/netscan.git
 cd netscan
 
-# Or download directly
-curl https://raw.githubusercontent.com/yynka/netscan/main/windows.py -o windows.py
-curl https://raw.githubusercontent.com/yynka/netscan/main/requirements.txt -o requirements.txt
-
-# Setup virtual environment
+# Setup virtual environment (create your own virtual environment locally - they are not included in the repository)
 python -m venv ns
 .\ns\Scripts\Activate.ps1
 
-# Install dependencies
+# Install Python dependencies
 pip install -r requirements.txt
 ```
 
@@ -77,22 +73,18 @@ python windows.py --fast
 
 ### Installation
 ```bash
-# Install system dependencies
-brew install nmap python3
-
 # Clone repository
 git clone https://github.com/yynka/netscan.git
 cd netscan
 
-# Or download directly
-curl https://raw.githubusercontent.com/yynka/netscan/main/macos.py -o macos.py
-curl https://raw.githubusercontent.com/yynka/netscan/main/requirements.txt -o requirements.txt
-
-# Setup virtual environment
+# Setup virtual environment (create your own virtual environment locally - they are not included in the repository)
 python3 -m venv ns
 source ns/bin/activate
 
-# Install dependencies
+# Install system dependencies
+brew install nmap python3
+
+# Install Python dependencies
 pip3 install -r requirements.txt
 ```
 
@@ -121,23 +113,20 @@ sudo python3 macos.py --fast
 
 ### Installation
 ```bash
-# Install system dependencies
-sudo apt-get update
-sudo apt-get install -y python3 python3-venv python3-pip nmap curl
-
 # Clone repository
 git clone https://github.com/yynka/netscan.git
 cd netscan
 
-# Or download directly
-curl https://raw.githubusercontent.com/yynka/netscan/main/linux.py -o linux.py
-curl https://raw.githubusercontent.com/yynka/netscan/main/requirements.txt -o requirements.txt
-
-# Setup virtual environment
+# Setup virtual environment (create your own virtual environment locally - they are not included in the repository)
+)
 python3 -m venv ns
 source ns/bin/activate
 
-# Install dependencies
+# Install system dependencies
+sudo apt-get update
+sudo apt-get install -y python3 python3-venv python3-pip nmap curl
+
+# Install Python dependencies
 pip install -r requirements.txt
 ```
 
